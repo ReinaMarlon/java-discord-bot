@@ -7,8 +7,7 @@ import java.net.http.HttpResponse;
 
 public class RiotService {
 
-    private static final String API_KEY = "";
-    private static final String henrydevKey = "";
+    private static final String henrydevKey = System.getenv("HENRY_API_TOKEN");
 
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(java.time.Duration.ofSeconds(10))
@@ -22,18 +21,6 @@ public class RiotService {
                 .GET()
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    public String getAccount(String name, String tag) throws Exception {
-        String url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
-                + name + "/" + tag;
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("X-Riot-Token", API_KEY)
-                .timeout(java.time.Duration.ofSeconds(15))
-                .GET()
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
     }
 
     public String getValorantRank(String region, String name, String tag) throws Exception {

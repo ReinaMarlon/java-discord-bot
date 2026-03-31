@@ -9,7 +9,7 @@ import com.marlonreina.resisas.listener.MessageListener;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String token = "";
+        String token = System.getenv("BOT_TOKEN");
 
         DatabaseInitializer.init();
 
