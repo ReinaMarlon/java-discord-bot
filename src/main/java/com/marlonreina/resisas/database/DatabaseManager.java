@@ -1,13 +1,23 @@
 package com.marlonreina.resisas.database;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
 
+@Component
 public class DatabaseManager {
 
-    private static final String URL = "jdbc:sqlite:bot.db";
+    private final DataSource dataSource;
 
-    public static Connection getConnection() throws Exception {
-        return DriverManager.getConnection(URL);
+    @Autowired
+    public DatabaseManager(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public Connection getConnection() throws SQLException {
+        // Esto devuelve una conexión del pool (Hikari) configurado para Postgres
+        return dataSource.getConnection();
     }
 }

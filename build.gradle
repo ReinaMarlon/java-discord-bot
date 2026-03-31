@@ -1,8 +1,10 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.resisas'
+group = 'com.marlonreina.resisas'
 version = '1.0'
 
 repositories {
@@ -14,8 +16,15 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'net.dv8tion:JDA:5.0.0-beta.24'
-    implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+    implementation 'org.postgresql:postgresql:42.7.4'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
 }
 
 test {
