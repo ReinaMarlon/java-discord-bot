@@ -2,15 +2,21 @@ package com.marlonreina.resisas.utils;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import com.marlonreina.resisas.service.GuildService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PrefixResolver {
 
-    private static final GuildService guildService = new GuildService();
+    private final GuildService guildService;
+
+    public PrefixResolver (GuildService guildService){
+        this.guildService = guildService;
+    }
 
     /**
      * Devuelve el prefijo actual del servidor.
      */
-    public static String getPrefix(String guildId) {
+    public String getPrefix(String guildId) {
         return guildService.getOrCreate(guildId).getPrefix();
     }
 
@@ -18,7 +24,7 @@ public class PrefixResolver {
      * Verifica si el mensaje activa un comando, ya sea por prefijo o por @mención al bot.
      * Devuelve el prefijo/mención detectada, o null si no aplica.
      */
-    public static String resolvePrefix(MessageReceivedEvent event) {
+    public String resolvePrefix(MessageReceivedEvent event) {
         String content  = event.getMessage().getContentRaw();
         String guildId  = event.getGuild().getId();
         String botId    = event.getJDA().getSelfUser().getId();
