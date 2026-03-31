@@ -1,20 +1,12 @@
 package com.marlonreina.resisas;
 
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import com.marlonreina.resisas.listener.HelpInteractionListener;
-import com.marlonreina.resisas.listener.MessageListener;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
 public class Main {
-    public static void main(String[] args) throws Exception {
 
-        String token = System.getenv("BOT_TOKEN");
-
-        JDABuilder.createDefault(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
-            .addEventListeners(new MessageListener())
-            .addEventListeners(new HelpInteractionListener())
-            .build();
-
-        System.out.println("Bot encendido.");
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
     }
 }

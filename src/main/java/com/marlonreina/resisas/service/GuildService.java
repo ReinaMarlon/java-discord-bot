@@ -2,24 +2,28 @@ package com.marlonreina.resisas.service;
 
 import com.marlonreina.resisas.model.GuildConfig;
 import com.marlonreina.resisas.repository.GuildRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class GuildService {
 
-    private final GuildRepository repo = new GuildRepository();
+    private final GuildRepository repo;
 
-    public GuildConfig getOrCreate(String guildId) {
-        GuildConfig config = repo.findById(guildId);
-
-        if (config == null) {
-            config = new GuildConfig(guildId, "-");
-            repo.save(config);
-        }
-
-        return config;
+    public GuildService(GuildRepository repo) {
+        this.repo = repo;
     }
 
+    public GuildConfig getOrCreate(String guildId) {
+        return repo.findById(guildId)
+                .orElseGet(() -> {
+                    GuildConfig config = new GuildConfig(guildId, "-");
+                    return repo.save(config);
+                });
+    }
+
+    @Transactional
     public void changePrefix(String guildId, String newPrefix) {
         repo.updatePrefix(guildId, newPrefix);
     }
-
 }

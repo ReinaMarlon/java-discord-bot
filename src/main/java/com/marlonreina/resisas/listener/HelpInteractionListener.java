@@ -1,5 +1,6 @@
 package com.marlonreina.resisas.listener;
 
+import com.marlonreina.resisas.repository.GuildRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -7,12 +8,18 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import com.marlonreina.resisas.service.GuildService;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 
+@Component
 public class HelpInteractionListener extends ListenerAdapter {
 
-    private final GuildService guildService = new GuildService();
+    private final GuildService guildService;
+
+    public HelpInteractionListener(GuildService guildService) {
+        this.guildService = guildService;
+    }
 
     // ── SelectMenu: usuario eligió un comando ──────────────────────────
     @Override

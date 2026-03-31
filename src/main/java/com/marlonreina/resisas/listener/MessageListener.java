@@ -4,23 +4,27 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import com.marlonreina.resisas.commands.CommandHandler;
 import com.marlonreina.resisas.utils.PrefixResolver;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MessageListener extends ListenerAdapter {
 
-//    private final GuildService guildService = new GuildService();
-    private final CommandHandler commandHandler = new CommandHandler();
+    private final CommandHandler commandHandler;
+    private final PrefixResolver prefixResolver;
+
+    public MessageListener(CommandHandler commandHandler, PrefixResolver prefixResolver) {
+        this.commandHandler = commandHandler;
+        this.prefixResolver = prefixResolver;
+    }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        // Ignorar bots
         if (event.getAuthor().isBot()) return;
-        // Solo en servidores
         if (!event.isFromGuild()) return;
 
-        String detectedPrefix = PrefixResolver.resolvePrefix(event);
+        String detectedPrefix = prefixResolver.resolvePrefix(event);
 
-        // No es un comando
         if (detectedPrefix == null) return;
 
         commandHandler.handle(event, detectedPrefix);

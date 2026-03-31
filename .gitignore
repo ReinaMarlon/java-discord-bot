@@ -43,5 +43,3 @@ bin/
 
 ### Database & Database Folder ###
 bot.db
-src/main/java/com/marlonreina/resisas/database/DatabaseInitializer.java
-

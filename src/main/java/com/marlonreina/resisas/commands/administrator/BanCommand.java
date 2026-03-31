@@ -28,7 +28,7 @@ public class BanCommand implements Command {
             return;
         }
 
-        var target = mentioned.getFirst();
+        var target = mentioned.get(0);
 
         if (!event.getGuild().getSelfMember().canInteract(target)) {
             event.getChannel().sendMessage("No puedo banear a ese usuario.").queue();
