@@ -1,10 +1,13 @@
 package com.marlonreina.resisas.service;
 
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+@Component
 public class RiotService {
 
     private static final String henrydevKey = System.getenv("HENRY_API_TOKEN");

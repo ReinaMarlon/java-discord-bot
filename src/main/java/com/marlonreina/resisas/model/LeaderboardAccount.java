@@ -1,8 +1,13 @@
 package com.marlonreina.resisas.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@AllArgsConstructor @NoArgsConstructor @Getter @Setter
 @Table(
         name = "leaderboard_accounts",
         uniqueConstraints = @UniqueConstraint(columnNames = {"guild_id", "riot_name", "riot_tag"})
@@ -25,18 +30,4 @@ public class LeaderboardAccount {
     @Column(name = "riot_tag", nullable = false)
     private String riotTag;
 
-    public LeaderboardAccount() {}
-
-    public LeaderboardAccount(String guildId, String discordId, String riotName, String riotTag) {
-        this.guildId = guildId;
-        this.discordId = discordId;
-        this.riotName = riotName;
-        this.riotTag = riotTag;
-    }
-
-    public Long getId() { return id; }
-    public String getGuildId() { return guildId; }
-    public String getDiscordId() { return discordId; }
-    public String getRiotName() { return riotName; }
-    public String getRiotTag() { return riotTag; }
 }

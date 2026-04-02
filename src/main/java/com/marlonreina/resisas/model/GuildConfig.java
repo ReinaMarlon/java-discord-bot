@@ -4,8 +4,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@NoArgsConstructor @AllArgsConstructor @Getter @Setter
 @Table(name = "guild_config")
 public class GuildConfig {
 
@@ -16,20 +21,4 @@ public class GuildConfig {
     @Column(name = "prefix")
     private String prefix;
 
-    public GuildConfig(String guildId, String prefix) {
-        this.guildId = guildId;
-        this.prefix = prefix;
-    }
-
-    public String getGuildId() {
-        return guildId;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
 }
