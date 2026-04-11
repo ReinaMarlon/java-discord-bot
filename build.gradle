@@ -2,6 +2,10 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'checkstyle'
+    id 'pmd'
+    id 'com.github.spotbugs' version '6.0.9'
+    id 'jacoco'
 }
 
 java {
@@ -24,20 +28,71 @@ dependencies {
     implementation 'net.dv8tion:JDA:5.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.postgresql:postgresql:42.7.7'
-
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
-
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
-
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.apache.groovy:groovy'
 
+    // SpotBugs annotations
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+// ── Checkstyle ──────────────────────────────────────────────
+checkstyle {
+    toolVersion = '10.14.2'
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+}
+
+// ── PMD ─────────────────────────────────────────────────────
+pmd {
+    toolVersion = '6.55.0'
+    ruleSets = []
+    ruleSetFiles = files("${rootDir}/config/pmd/ruleset.xml")
+    ignoreFailures = false
+}
+
+// ── SpotBugs ─────────────────────────────────────────────────
+spotbugs {
+    toolVersion = '4.8.3'
+    ignoreFailures = false
+}
+
+spotbugsMain {
+    reports {
+        html { required = true }
+    }
+}
+
+spotbugsTest {
+    reports {
+        html { required = true }
+    }
+}
+
+// ── JaCoCo ───────────────────────────────────────────────────
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml { required = true }
+        html { required = true }
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80 // 80% de cobertura mínima
+            }
+        }
+    }
 }

@@ -1,0 +1,61 @@
+name: Test, CheckStyle & Coverage
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descargar el código
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # 2. Validar Conventional Commits
+      - name: Validate Conventional Commits
+        uses: webiny/action-conventional-commits@v1.3.0
+
+      # 3. Configurar JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 4. Cache Gradle
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 5. Checkstyle
+      - name: Run Checkstyle
+        run: ./gradlew checkstyleMain checkstyleTest
+
+      # 6. PMD (malas prácticas y duplicaciones)
+      - name: Run PMD
+        run: ./gradlew pmdMain pmdTest
+
+      # 7. SpotBugs + FindSecBugs (análisis de bugs y seguridad)
+      - name: Run SpotBugs
+        run: ./gradlew spotbugsMain spotbugsTest
+
+      # 8. Compilar, ejecutar tests y generar cobertura
+      - name: Build and test with coverage
+        run: ./gradlew clean build jacocoTestReport
+
+      # 9. Subir el reporte de cobertura (HTML y/o XML)
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco

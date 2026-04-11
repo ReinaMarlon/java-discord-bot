@@ -41,9 +41,9 @@ spring:
       on-profile: local
 
   datasource:
-    url: jdbc:postgresql://${RAILWAY_TCP_PROXY_DOMAIN}:${RAILWAY_TCP_PROXY_PORT}/${PGDATABASE}
-    username: ${PGUSER}
-    password: ${PGPASSWORD}
+    url: jdbc:postgresql://${TESTING_RAILWAY_TCP_PROXY_DOMAIN}:${TESTING_RAILWAY_TCP_PROXY_PORT}/${TESTING_PGDATABASE}
+    username: ${TESTING_PGUSER}
+    password: ${TESTING_PGPASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
