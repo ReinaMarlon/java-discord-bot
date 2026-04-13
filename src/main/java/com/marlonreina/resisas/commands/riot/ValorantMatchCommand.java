@@ -11,9 +11,6 @@ import java.awt.*;
 
 public class ValorantMatchCommand implements Command {
 
-    private final RiotService riotService;
-    private final ObjectMapper mapper = new ObjectMapper();
-
     // Emojis de rango aproximado por tier
     private static final String[] TIER_EMOJIS = {
             "⬜", "⬜", "⬜",           // Unranked / Iron
@@ -26,6 +23,8 @@ public class ValorantMatchCommand implements Command {
             "💎", "💎", "💎",           // Immortal
             "🏆"                       // Radiant
     };
+    private final RiotService riotService;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public ValorantMatchCommand(RiotService riotService) {
         this.riotService = riotService;

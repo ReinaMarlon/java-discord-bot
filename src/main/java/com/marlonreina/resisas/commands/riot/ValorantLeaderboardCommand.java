@@ -25,21 +25,6 @@ public class ValorantLeaderboardCommand implements Command {
         this.riotService = riotService;
     }
 
-    private static class PlayerEntry {
-        String riotId;
-        int elo;
-        int tier;
-        String rankPatched;
-        int rr;
-        int mmrChange;
-        String peakRank;
-        int peakElo;
-        double winRate;
-        double avgAcs;
-        double avgKda;
-        int gamesPlayed;
-    }
-
     @Override
     public void execute(MessageReceivedEvent event, String[] args) {
 
@@ -255,5 +240,20 @@ public class ValorantLeaderboardCommand implements Command {
         if (tier <= 23) return "🟢";
         if (tier <= 26) return "🔴";
         return "🏆";
+    }
+
+    private static class PlayerEntry {
+        String riotId;
+        int elo;
+        int tier;
+        String rankPatched;
+        int rr;
+        int mmrChange;
+        String peakRank;
+        int peakElo;
+        double winRate;
+        double avgAcs;
+        double avgKda;
+        int gamesPlayed;
     }
 }

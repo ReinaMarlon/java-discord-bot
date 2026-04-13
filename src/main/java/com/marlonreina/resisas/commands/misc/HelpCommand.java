@@ -17,12 +17,6 @@ public class HelpCommand implements Command {
         this.guildService = guildService;
     }
 
-    @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
-        String prefix = guildService.getOrCreate(event.getGuild().getId()).getPrefix();
-        sendMainMenu(event, prefix);
-    }
-
     public static void sendMainMenu(MessageReceivedEvent event, String prefix) {
         EmbedBuilder embed = getEmbedBuilder(event, prefix);
 
@@ -62,5 +56,11 @@ public class HelpCommand implements Command {
         embed.addField("🎮  Valorant", "`consultar` · `vrank` · `vmatch`", false);
         embed.setFooter("Resisas Bot  •  " + event.getGuild().getName());
         return embed;
+    }
+
+    @Override
+    public void execute(MessageReceivedEvent event, String[] args) {
+        String prefix = guildService.getOrCreate(event.getGuild().getId()).getPrefix();
+        sendMainMenu(event, prefix);
     }
 }
