@@ -28,7 +28,7 @@ public class EmbedUtil {
                 .setFooter("Sistema de moderación ResisasBot. V 1.0");
     }
 
-    public static EmbedBuilder simplyBuildMessage(String title, String desc, Color color){
+    public static EmbedBuilder simplyBuildMessage(String title, String desc, Color color) {
         return new EmbedBuilder()
                 .setTitle(title)
                 .setDescription(desc)

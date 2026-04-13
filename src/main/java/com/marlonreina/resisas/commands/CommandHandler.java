@@ -1,8 +1,15 @@
 package com.marlonreina.resisas.commands;
 
-import com.marlonreina.resisas.commands.administrator.*;
+import com.marlonreina.resisas.commands.administrator.BanCommand;
+import com.marlonreina.resisas.commands.administrator.ClearCommand;
+import com.marlonreina.resisas.commands.administrator.KickCommand;
+import com.marlonreina.resisas.commands.administrator.PrefixCommand;
 import com.marlonreina.resisas.commands.misc.HelpCommand;
-import com.marlonreina.resisas.commands.riot.*;
+import com.marlonreina.resisas.commands.riot.ValorantLeaderboardCommand;
+import com.marlonreina.resisas.commands.riot.ValorantMatchCommand;
+import com.marlonreina.resisas.commands.riot.ValorantPlayerCommand;
+import com.marlonreina.resisas.commands.riot.ValorantRankCommand;
+import com.marlonreina.resisas.commands.riot.ValorantRegisterCommand;
 import com.marlonreina.resisas.commands.test.PingCommand;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.service.LeaderboardService;

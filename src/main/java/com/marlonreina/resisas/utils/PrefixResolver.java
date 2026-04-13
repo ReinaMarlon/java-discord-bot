@@ -1,7 +1,7 @@
 package com.marlonreina.resisas.utils;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import com.marlonreina.resisas.service.GuildService;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,7 +9,7 @@ public class PrefixResolver {
 
     private final GuildService guildService;
 
-    public PrefixResolver (GuildService guildService){
+    public PrefixResolver(GuildService guildService) {
         this.guildService = guildService;
     }
 
@@ -25,12 +25,12 @@ public class PrefixResolver {
      * Devuelve el prefijo/mención detectada, o null si no aplica.
      */
     public String resolvePrefix(MessageReceivedEvent event) {
-        String content  = event.getMessage().getContentRaw();
-        String guildId  = event.getGuild().getId();
-        String botId    = event.getJDA().getSelfUser().getId();
+        String content = event.getMessage().getContentRaw();
+        String guildId = event.getGuild().getId();
+        String botId = event.getJDA().getSelfUser().getId();
 
         // ── Mención directa: @Bot comando ─────────────────────────────
-        String mentionPrefix  = "<@" + botId + ">";
+        String mentionPrefix = "<@" + botId + ">";
         String mentionPrefix2 = "<@!" + botId + ">"; // legacy mention format
 
         if (content.startsWith(mentionPrefix)) {

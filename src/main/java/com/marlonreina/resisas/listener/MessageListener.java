@@ -1,9 +1,9 @@
 package com.marlonreina.resisas.listener;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import com.marlonreina.resisas.commands.CommandHandler;
 import com.marlonreina.resisas.utils.PrefixResolver;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.stereotype.Component;
 
 @Component
