@@ -2,10 +2,10 @@ package com.marlonreina.resisas.commands.riot;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import com.marlonreina.resisas.commands.Command;
 import com.marlonreina.resisas.service.RiotService;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
 
@@ -16,14 +16,14 @@ public class ValorantMatchCommand implements Command {
 
     // Emojis de rango aproximado por tier
     private static final String[] TIER_EMOJIS = {
-            "⬜","⬜","⬜",           // Unranked / Iron
-            "🟫","🟫","🟫",           // Bronze
-            "⬛","⬛","⬛",           // Silver
-            "🟨","🟨","🟨",           // Gold
-            "🟦","🟦","🟦",           // Platinum
-            "💠","💠","💠",           // Diamond
-            "🔷","🔷","🔷",           // Ascendant
-            "💎","💎","💎",           // Immortal
+            "⬜", "⬜", "⬜",           // Unranked / Iron
+            "🟫", "🟫", "🟫",           // Bronze
+            "⬛", "⬛", "⬛",           // Silver
+            "🟨", "🟨", "🟨",           // Gold
+            "🟦", "🟦", "🟦",           // Platinum
+            "💠", "💠", "💠",           // Diamond
+            "🔷", "🔷", "🔷",           // Ascendant
+            "💎", "💎", "💎",           // Immortal
             "🏆"                       // Radiant
     };
 
@@ -49,29 +49,29 @@ public class ValorantMatchCommand implements Command {
             }
 
             String name = riotId[0].trim();
-            String tag  = riotId[1].trim();
+            String tag = riotId[1].trim();
 
             String json = riotService.getMatches("latam", name, tag);
-            JsonNode root  = mapper.readTree(json);
+            JsonNode root = mapper.readTree(json);
             JsonNode match = root.get("data").get(0);
 
             // ── Metadata ──────────────────────────────────────────────
-            JsonNode meta        = match.get("metadata");
-            String   map         = meta.get("map").asText();
-            String   mode        = meta.get("mode").asText();
-            int      roundsPlayed = meta.get("rounds_played").asInt();
-            String   startTime   = meta.get("game_start_patched").asText();
+            JsonNode meta = match.get("metadata");
+            String map = meta.get("map").asText();
+            String mode = meta.get("mode").asText();
+            int roundsPlayed = meta.get("rounds_played").asInt();
+            String startTime = meta.get("game_start_patched").asText();
 
             // ── Resultado del partido ──────────────────────────────────
-            JsonNode teams    = match.get("teams");
-            JsonNode redTeam  = teams.get("red");
+            JsonNode teams = match.get("teams");
+            JsonNode redTeam = teams.get("red");
             JsonNode blueTeam = teams.get("blue");
-            int redWins  = redTeam.get("rounds_won").asInt();
+            int redWins = redTeam.get("rounds_won").asInt();
             int blueWins = blueTeam.get("rounds_won").asInt();
-            boolean redWon  = redTeam.get("has_won").asBoolean();
+            boolean redWon = redTeam.get("has_won").asBoolean();
 
             // ── Jugador consultado ─────────────────────────────────────
-            JsonNode players    = match.get("players").get("all_players");
+            JsonNode players = match.get("players").get("all_players");
             JsonNode mainPlayer = null;
 
             for (JsonNode p : players) {
@@ -86,27 +86,27 @@ public class ValorantMatchCommand implements Command {
                 return;
             }
 
-            String playerTeam   = mainPlayer.get("team").asText();          // "Red" o "Blue"
-            String agent        = mainPlayer.get("character").asText();
-            String rank         = mainPlayer.get("currenttier_patched").asText();
-            int    tier         = mainPlayer.get("currenttier").asInt();
+            String playerTeam = mainPlayer.get("team").asText();          // "Red" o "Blue"
+            String agent = mainPlayer.get("character").asText();
+            String rank = mainPlayer.get("currenttier_patched").asText();
+            int tier = mainPlayer.get("currenttier").asInt();
             String agentIconUrl = mainPlayer.get("assets").get("agent").get("small").asText();
 
             JsonNode stats = mainPlayer.get("stats");
-            int kills   = stats.get("kills").asInt();
-            int deaths  = stats.get("deaths").asInt();
+            int kills = stats.get("kills").asInt();
+            int deaths = stats.get("deaths").asInt();
             int assists = stats.get("assists").asInt();
-            int score   = stats.get("score").asInt();
-            int hs      = stats.get("headshots").asInt();
-            int bs      = stats.get("bodyshots").asInt();
-            int ls      = stats.get("legshots").asInt();
+            int score = stats.get("score").asInt();
+            int hs = stats.get("headshots").asInt();
+            int bs = stats.get("bodyshots").asInt();
+            int ls = stats.get("legshots").asInt();
             int totalShots = hs + bs + ls;
             double hsPercent = totalShots > 0 ? (hs * 100.0 / totalShots) : 0;
 
-            int dmgMade     = mainPlayer.get("damage_made").asInt();
+            int dmgMade = mainPlayer.get("damage_made").asInt();
             int dmgReceived = mainPlayer.get("damage_received").asInt();
-            int acs         = score / Math.max(roundsPlayed, 1);
-            double kda      = (kills + assists) / (double) Math.max(deaths, 1);
+            int acs = score / Math.max(roundsPlayed, 1);
+            double kda = (kills + assists) / (double) Math.max(deaths, 1);
 
             // Ganó o perdió?
             boolean mainWon = (playerTeam.equalsIgnoreCase("Red") && redWon)
@@ -115,14 +115,14 @@ public class ValorantMatchCommand implements Command {
             Color embedColor = mainWon ? new Color(0x2ECC71) : new Color(0xE74C3C);
 
             // ── Construcción de líneas por equipo ──────────────────────
-            StringBuilder redBuilder  = new StringBuilder();
+            StringBuilder redBuilder = new StringBuilder();
             StringBuilder blueBuilder = new StringBuilder();
 
             for (JsonNode p : players) {
-                String pName    = p.get("name").asText() + "#" + p.get("tag").asText();
-                String pAgent   = p.get("character").asText();
-                String pRank    = p.get("currenttier_patched").asText();
-                int    pTier    = p.get("currenttier").asInt();
+                String pName = p.get("name").asText() + "#" + p.get("tag").asText();
+                String pAgent = p.get("character").asText();
+                String pRank = p.get("currenttier_patched").asText();
+                int pTier = p.get("currenttier").asInt();
                 JsonNode pStats = p.get("stats");
                 int pk = pStats.get("kills").asInt();
                 int pd = pStats.get("deaths").asInt();
@@ -133,8 +133,8 @@ public class ValorantMatchCommand implements Command {
 
                 // Marca al jugador principal con ★
                 boolean isMain = p.get("name").asText().equalsIgnoreCase(name);
-                String prefix  = isMain ? "**★ " : "";
-                String suffix  = isMain ? "**" : "";
+                String prefix = isMain ? "**★ " : "";
+                String suffix = isMain ? "**" : "";
 
                 String line = String.format("%s%s %s | %s | %d/%d/%d | ACS %d%s\n",
                         prefix, tierEmoji, pAgent, pName, pk, pd, pa, pAcs, suffix);
@@ -199,12 +199,12 @@ public class ValorantMatchCommand implements Command {
     /**
      * Devuelve un emoji representativo según el tier numérico de Valorant.
      * Tiers: 0=Unranked, 3-5=Iron, 6-8=Bronze, 9-11=Silver, 12-14=Gold,
-     *        15-17=Platinum, 18-20=Diamond, 21-23=Ascendant, 24-26=Immortal, 27=Radiant
+     * 15-17=Platinum, 18-20=Diamond, 21-23=Ascendant, 24-26=Immortal, 27=Radiant
      */
     private String getTierEmoji(int tier) {
-        if (tier == 0)  return "❓"; // Unranked
-        if (tier <= 5)  return "🔘"; // Iron      - gris
-        if (tier <= 8)  return "🟤"; // Bronze    - café
+        if (tier == 0) return "❓"; // Unranked
+        if (tier <= 5) return "🔘"; // Iron      - gris
+        if (tier <= 8) return "🟤"; // Bronze    - café
         if (tier <= 11) return "⚪"; // Silver    - blanco/gris claro
         if (tier <= 14) return "🟡"; // Gold      - amarillo
         if (tier <= 17) return "🔵"; // Platinum  - azul

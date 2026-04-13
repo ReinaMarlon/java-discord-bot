@@ -2,12 +2,12 @@ package com.marlonreina.resisas.commands.riot;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import com.marlonreina.resisas.commands.Command;
 import com.marlonreina.resisas.model.LeaderboardAccount;
 import com.marlonreina.resisas.service.LeaderboardService;
 import com.marlonreina.resisas.service.RiotService;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,27 +17,27 @@ import java.util.List;
 public class ValorantLeaderboardCommand implements Command {
 
     private final LeaderboardService leaderboardService;
-    private final RiotService        riotService;
-    private final ObjectMapper       mapper = new ObjectMapper();
+    private final RiotService riotService;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public ValorantLeaderboardCommand(LeaderboardService leaderboardService, RiotService riotService) {
         this.leaderboardService = leaderboardService;
-        this.riotService        = riotService;
+        this.riotService = riotService;
     }
 
     private static class PlayerEntry {
-        String  riotId;
-        int     elo;
-        int     tier;
-        String  rankPatched;
-        int     rr;
-        int     mmrChange;
-        String  peakRank;
-        int     peakElo;
-        double  winRate;
-        double  avgAcs;
-        double  avgKda;
-        int     gamesPlayed;
+        String riotId;
+        int elo;
+        int tier;
+        String rankPatched;
+        int rr;
+        int mmrChange;
+        String peakRank;
+        int peakElo;
+        double winRate;
+        double avgAcs;
+        double avgKda;
+        int gamesPlayed;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ValorantLeaderboardCommand implements Command {
                 for (LeaderboardAccount acc : accounts) {
                     futures.add(executor.submit(() -> {
                         try {
-                            Thread.sleep((long)(Math.random() * 1000));
+                            Thread.sleep((long) (Math.random() * 1000));
                             PlayerEntry entry = buildEntry(acc);
                             if (entry != null) entries.add(entry);
                         } catch (Exception e) {
@@ -111,10 +111,10 @@ public class ValorantLeaderboardCommand implements Command {
                 String[] medals = {"🥇", "🥈", "🥉"};
 
                 for (int i = 0; i < entries.size(); i++) {
-                    PlayerEntry e       = entries.get(i);
-                    String      pos     = i < 3 ? medals[i] : "`#" + (i + 1) + "`";
-                    String      rankEmoji = getTierEmoji(e.tier);
-                    String      mmrStr  = e.mmrChange >= 0 ? "▲+" + e.mmrChange : "▼" + e.mmrChange;
+                    PlayerEntry e = entries.get(i);
+                    String pos = i < 3 ? medals[i] : "`#" + (i + 1) + "`";
+                    String rankEmoji = getTierEmoji(e.tier);
+                    String mmrStr = e.mmrChange >= 0 ? "▲+" + e.mmrChange : "▼" + e.mmrChange;
 
                     board.append(String.format(
                             "%s  %s %s **%s**  ·  `%d RR`  %s\n",
@@ -125,9 +125,9 @@ public class ValorantLeaderboardCommand implements Command {
                 embed.setDescription(board.toString());
 
                 for (int i = 0; i < entries.size(); i++) {
-                    PlayerEntry e     = entries.get(i);
-                    String      pos   = i < 3 ? medals[i] : "#" + (i + 1);
-                    String      emoji = getTierEmoji(e.tier);
+                    PlayerEntry e = entries.get(i);
+                    String pos = i < 3 ? medals[i] : "#" + (i + 1);
+                    String emoji = getTierEmoji(e.tier);
 
                     embed.addField(
                             pos + "  " + emoji + "  " + e.riotId,
@@ -161,41 +161,41 @@ public class ValorantLeaderboardCommand implements Command {
 
     private PlayerEntry buildEntry(LeaderboardAccount acc) throws Exception {
         String name = acc.getRiotName();
-        String tag  = acc.getRiotTag();
+        String tag = acc.getRiotTag();
 
-        String   mmrJson  = riotService.getMMRhistory("latam", name, tag);
-        JsonNode mmrRoot  = mapper.readTree(mmrJson);
-        JsonNode mmrData  = mmrRoot.get("data");
+        String mmrJson = riotService.getMMRhistory("latam", name, tag);
+        JsonNode mmrRoot = mapper.readTree(mmrJson);
+        JsonNode mmrData = mmrRoot.get("data");
 
         if (mmrData == null || !mmrData.isArray() || mmrData.size() == 0) return null;
 
         JsonNode latest = mmrData.get(0);
 
-        PlayerEntry entry    = new PlayerEntry();
-        entry.riotId         = name + "#" + tag;
-        entry.elo            = latest.get("elo").asInt(0);
-        entry.tier           = latest.get("currenttier").asInt(0);
-        entry.rankPatched    = latest.get("currenttierpatched").asText("Unranked");
-        entry.rr             = latest.get("ranking_in_tier").asInt(0);
-        entry.mmrChange      = latest.get("mmr_change_to_last_game").asInt(0);
+        PlayerEntry entry = new PlayerEntry();
+        entry.riotId = name + "#" + tag;
+        entry.elo = latest.get("elo").asInt(0);
+        entry.tier = latest.get("currenttier").asInt(0);
+        entry.rankPatched = latest.get("currenttierpatched").asText("Unranked");
+        entry.rr = latest.get("ranking_in_tier").asInt(0);
+        entry.mmrChange = latest.get("mmr_change_to_last_game").asInt(0);
 
-        entry.peakElo  = 0;
+        entry.peakElo = 0;
         entry.peakRank = entry.rankPatched;
         for (JsonNode e : mmrData) {
             int elo = e.get("elo").asInt(0);
             if (elo > entry.peakElo) {
-                entry.peakElo  = elo;
+                entry.peakElo = elo;
                 entry.peakRank = e.get("currenttierpatched").asText("N/A");
             }
         }
 
-        String   matchJson  = riotService.getMatchHistory("latam", name, tag, 10);
-        JsonNode matchRoot  = mapper.readTree(matchJson);
-        JsonNode matches    = matchRoot.get("data");
+        String matchJson = riotService.getMatchHistory("latam", name, tag, 10);
+        JsonNode matchRoot = mapper.readTree(matchJson);
+        JsonNode matches = matchRoot.get("data");
 
-        int totalGames   = 0, wins = 0;
-        int totalKills   = 0, totalDeaths = 0, totalAssists = 0;
-        int totalAcs     = 0;
+        int totalGames = 0, wins = 0;
+        int totalKills = 0, totalDeaths = 0, totalAssists = 0;
+        int totalAcs = 0;
 
         if (matches != null && matches.isArray()) {
             for (JsonNode match : matches) {
@@ -203,11 +203,14 @@ public class ValorantLeaderboardCommand implements Command {
 
                 int roundsPlayed = match.get("metadata").get("rounds_played").asInt(1);
                 JsonNode players = match.get("players").get("all_players");
-                JsonNode teams   = match.get("teams");
+                JsonNode teams = match.get("teams");
 
                 JsonNode mainPlayer = null;
                 for (JsonNode p : players) {
-                    if (p.get("name").asText().equalsIgnoreCase(name)) { mainPlayer = p; break; }
+                    if (p.get("name").asText().equalsIgnoreCase(name)) {
+                        mainPlayer = p;
+                        break;
+                    }
                 }
                 if (mainPlayer == null) continue;
 
@@ -218,13 +221,13 @@ public class ValorantLeaderboardCommand implements Command {
                 int a = stats.get("assists").asInt();
                 int s = stats.get("score").asInt();
 
-                totalKills   += k;
-                totalDeaths  += d;
+                totalKills += k;
+                totalDeaths += d;
                 totalAssists += a;
-                totalAcs     += (s / Math.max(roundsPlayed, 1));
+                totalAcs += (s / Math.max(roundsPlayed, 1));
 
-                String  playerTeam = mainPlayer.get("team").asText();
-                boolean redWon     = teams.get("red").get("has_won").asBoolean();
+                String playerTeam = mainPlayer.get("team").asText();
+                boolean redWon = teams.get("red").get("has_won").asBoolean();
                 boolean won = (playerTeam.equalsIgnoreCase("Red") && redWon)
                         || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
                 if (won) wins++;
@@ -232,19 +235,19 @@ public class ValorantLeaderboardCommand implements Command {
         }
 
         entry.gamesPlayed = totalGames;
-        entry.winRate     = totalGames > 0 ? (wins * 100.0 / totalGames) : 0;
-        entry.avgKda      = totalDeaths > 0
+        entry.winRate = totalGames > 0 ? (wins * 100.0 / totalGames) : 0;
+        entry.avgKda = totalDeaths > 0
                 ? (totalKills + totalAssists) / (double) totalDeaths
                 : totalKills + totalAssists;
-        entry.avgAcs      = totalGames > 0 ? (double) totalAcs / totalGames : 0;
+        entry.avgAcs = totalGames > 0 ? (double) totalAcs / totalGames : 0;
 
         return entry;
     }
 
     private String getTierEmoji(int tier) {
-        if (tier == 0)  return "❓";
-        if (tier <= 5)  return "🔘";
-        if (tier <= 8)  return "🟤";
+        if (tier == 0) return "❓";
+        if (tier <= 5) return "🔘";
+        if (tier <= 8) return "🟤";
         if (tier <= 11) return "⚪";
         if (tier <= 14) return "🟡";
         if (tier <= 17) return "🔵";
