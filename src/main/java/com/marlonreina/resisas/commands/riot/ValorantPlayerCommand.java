@@ -59,7 +59,6 @@ public class ValorantPlayerCommand implements Command {
                 int currentElo = latest.get("elo").asInt(0);
                 String rankIconUrl = latest.get("images").get("small").asText();
 
-                // ── Peak rank = mayor ELO en el historial ──────────────
                 int peakElo = 0;
                 String peakRank = currentRank;
                 String peakDate = "";
@@ -70,11 +69,12 @@ public class ValorantPlayerCommand implements Command {
                         peakElo = elo;
                         peakRank = entry.get("currenttierpatched").asText("N/A");
                         peakDate = entry.get("date").asText("");
-                        // Recortar solo la fecha sin hora
                         if (peakDate.contains(" ")) {
                             String[] parts2 = peakDate.split(",");
-                            peakDate = parts2.length > 1 ? parts2[0] + "," + parts2[1].trim().split(" ")[0]
-                                    + " " + parts2[1].trim().split(" ")[1] : peakDate;
+                            peakDate = parts2.length > 1
+                                    ? parts2[0] + "," + parts2[1].trim().split(" ")[0]
+                                    + " " + parts2[1].trim().split(" ")[1]
+                                    : peakDate;
                         }
                     }
                 }
@@ -101,7 +101,9 @@ public class ValorantPlayerCommand implements Command {
                     for (JsonNode match : matches) {
 
                         String mode = match.get("metadata").get("mode_id").asText();
-                        if (!mode.equals("competitive")) continue;
+                        if (!mode.equals("competitive")) {
+                            continue;
+                        }
 
                         int roundsPlayed = match.get("metadata").get("rounds_played").asInt(1);
                         JsonNode players = match.get("players").get("all_players");
@@ -114,7 +116,9 @@ public class ValorantPlayerCommand implements Command {
                                 break;
                             }
                         }
-                        if (mainPlayer == null) continue;
+                        if (mainPlayer == null) {
+                            continue;
+                        }
 
                         totalGames++;
 
@@ -141,31 +145,44 @@ public class ValorantPlayerCommand implements Command {
                         boolean redWon = teams.get("red").get("has_won").asBoolean();
                         boolean won = (playerTeam.equalsIgnoreCase("Red") && redWon)
                                 || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
-                        if (won) wins++;
-                        else losses++;
+                        if (won) {
+                            wins++;
+                        } else {
+                            losses++;
+                        }
 
                         JsonNode rounds = match.get("rounds");
                         if (rounds != null) {
                             for (JsonNode round : rounds) {
                                 JsonNode playerStats = round.get("player_stats");
-                                if (playerStats == null) continue;
+                                if (playerStats == null) {
+                                    continue;
+                                }
                                 for (JsonNode ps : playerStats) {
                                     if (!ps.get("player_puuid").asText()
-                                            .equals(mainPlayer.get("puuid").asText())) continue;
+                                            .equals(mainPlayer.get("puuid").asText())) {
+                                        continue;
+                                    }
 
                                     int roundKills = ps.get("kills").asInt(0);
-                                    if (roundKills >= 5) aces++;
+                                    if (roundKills >= 5) {
+                                        aces++;
+                                    }
 
                                     if (roundKills >= 1) {
                                         JsonNode killEvents = ps.get("kill_events");
                                         if (killEvents != null) {
                                             for (JsonNode ke : killEvents) {
                                                 JsonNode locs = ke.get("player_locations_on_kill");
-                                                if (locs == null) continue;
+                                                if (locs == null) {
+                                                    continue;
+                                                }
                                                 long aliveTeammates = 0;
                                                 for (JsonNode loc : locs) {
                                                     if (loc.get("player_team").asText()
-                                                            .equalsIgnoreCase(playerTeam)) aliveTeammates++;
+                                                            .equalsIgnoreCase(playerTeam)) {
+                                                        aliveTeammates++;
+                                                    }
                                                 }
                                                 if (aliveTeammates == 1) {
                                                     clutches++;
@@ -192,7 +209,6 @@ public class ValorantPlayerCommand implements Command {
                         .map(java.util.Map.Entry::getKey)
                         .orElse("N/A");
 
-                // ── Color según winrate ────────────────────────────────
                 Color color = winRate >= 55 ? new Color(0x2ECC71)
                         : winRate >= 45 ? new Color(0xF39C12)
                         : new Color(0xE74C3C);
@@ -204,23 +220,25 @@ public class ValorantPlayerCommand implements Command {
                 embed.setColor(color);
                 embed.setThumbnail(rankIconUrl);
 
-                if (agentIconUrl != null) embed.setAuthor(name + "#" + tag, null, agentIconUrl);
+                if (agentIconUrl != null) {
+                    embed.setAuthor(name + "#" + tag, null, agentIconUrl);
+                }
 
                 embed.setTitle("📊  Perfil Valorant");
                 embed.setDescription(
-                        rankEmoji + "  **" + currentRank + "**  ·  `" + rankingInTier + " RR`  " +
-                                "(" + mmrChangeStr + " último partido)\n" +
-                                "📈 ELO actual: **" + currentElo + "**  " + eloChangeStr + " vs historial\n" +
-                                "🏆 Peak: **" + peakRank + "**  (" + peakElo + " ELO)\n\u200B"
+                        rankEmoji + "  **" + currentRank + "**  ·  `" + rankingInTier + " RR`  "
+                                + "(" + mmrChangeStr + " último partido)\n"
+                                + "📈 ELO actual: **" + currentElo + "**  " + eloChangeStr + " vs historial\n"
+                                + "🏆 Peak: **" + peakRank + "**  (" + peakElo + " ELO)\n\u200B"
                 );
 
                 embed.addField(
                         "🎮  Últimas " + totalGames + " partidas ranked",
                         String.format(
-                                "```\n" +
-                                        "Victorias    %d   (%.1f%%)\n" +
-                                        "Derrotas     %d\n" +
-                                        "```",
+                                "```\n"
+                                        + "Victorias    %d   (%.1f%%)\n"
+                                        + "Derrotas     %d\n"
+                                        + "```",
                                 wins, winRate, losses
                         ),
                         false
@@ -229,12 +247,12 @@ public class ValorantPlayerCommand implements Command {
                 embed.addField(
                         "📈  Rendimiento promedio",
                         String.format(
-                                "```\n" +
-                                        "KDA          %.2f\n" +
-                                        "K / D / A    %d / %d / %d\n" +
-                                        "ACS          %.0f\n" +
-                                        "Daño/match   %.0f\n" +
-                                        "```",
+                                "```\n"
+                                        + "KDA          %.2f\n"
+                                        + "K / D / A    %d / %d / %d\n"
+                                        + "ACS          %.0f\n"
+                                        + "Daño/match   %.0f\n"
+                                        + "```",
                                 avgKda, totalKills, totalDeaths, totalAssists, avgAcs, avgDmg
                         ),
                         false
@@ -243,11 +261,11 @@ public class ValorantPlayerCommand implements Command {
                 embed.addField(
                         "🌟  Highlights",
                         String.format(
-                                "```\n" +
-                                        "Aces         %d\n" +
-                                        "Clutches     %d\n" +
-                                        "Agente fav.  %s\n" +
-                                        "```",
+                                "```\n"
+                                        + "Aces         %d\n"
+                                        + "Clutches     %d\n"
+                                        + "Agente fav.  %s\n"
+                                        + "```",
                                 aces, clutches, mostPlayedAgent
                         ),
                         false
@@ -267,15 +285,33 @@ public class ValorantPlayerCommand implements Command {
     }
 
     private String getTierEmoji(int tier) {
-        if (tier == 0) return "❓";
-        if (tier <= 5) return "🔘";
-        if (tier <= 8) return "🟤";
-        if (tier <= 11) return "⚪";
-        if (tier <= 14) return "🟡";
-        if (tier <= 17) return "🔵";
-        if (tier <= 20) return "💎️";
-        if (tier <= 23) return "🟢";
-        if (tier <= 26) return "🔴";
+        if (tier == 0) {
+            return "❓";
+        }
+        if (tier <= 5) {
+            return "🔘";
+        }
+        if (tier <= 8) {
+            return "🟤";
+        }
+        if (tier <= 11) {
+            return "⚪";
+        }
+        if (tier <= 14) {
+            return "🟡";
+        }
+        if (tier <= 17) {
+            return "🔵";
+        }
+        if (tier <= 20) {
+            return "💎️";
+        }
+        if (tier <= 23) {
+            return "🟢";
+        }
+        if (tier <= 26) {
+            return "🔴";
+        }
         return "🏆";
     }
 }

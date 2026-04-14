@@ -32,22 +32,17 @@ public class ValorantLeaderboardCommand implements Command {
         List<LeaderboardAccount> accounts = leaderboardService.getAccounts(guildId);
 
         if (accounts.isEmpty()) {
-            event.getChannel().sendMessage(
-                    "❌ No hay cuentas registradas. Usa `!vregisteraccount nombre#tag` para agregar una."
-            ).queue();
+            event.getChannel().sendMessage("❌ No hay cuentas registradas. Usa `!vregisteraccount nombre#tag` para agregar una.").queue();
             return;
         }
 
-        event.getChannel().sendMessage(
-                "⏳ Consultando " + accounts.size() + " cuenta(s), espera un momento..."
-        ).queue(loadingMsg -> {
+        event.getChannel().sendMessage("⏳ Consultando " + accounts.size() + " cuenta(s), espera un momento...").queue(loadingMsg -> {
             try {
 
                 List<PlayerEntry> entries = new java.util.concurrent.CopyOnWriteArrayList<>();
 
 
-                java.util.concurrent.ExecutorService executor =
-                        java.util.concurrent.Executors.newFixedThreadPool(Math.min(accounts.size(), 10));
+                java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(Math.min(accounts.size(), 10));
 
                 List<java.util.concurrent.Future<?>> futures = new ArrayList<>();
 
@@ -101,10 +96,7 @@ public class ValorantLeaderboardCommand implements Command {
                     String rankEmoji = getTierEmoji(e.tier);
                     String mmrStr = e.mmrChange >= 0 ? "▲+" + e.mmrChange : "▼" + e.mmrChange;
 
-                    board.append(String.format(
-                            "%s  %s %s **%s**  ·  `%d RR`  %s\n",
-                            pos, rankEmoji, e.rankPatched, e.riotId, e.rr, mmrStr
-                    ));
+                    board.append(String.format("%s  %s %s **%s**  ·  `%d RR`  %s\n", pos, rankEmoji, e.rankPatched, e.riotId, e.rr, mmrStr));
                 }
 
                 embed.setDescription(board.toString());
@@ -114,22 +106,7 @@ public class ValorantLeaderboardCommand implements Command {
                     String pos = i < 3 ? medals[i] : "#" + (i + 1);
                     String emoji = getTierEmoji(e.tier);
 
-                    embed.addField(
-                            pos + "  " + emoji + "  " + e.riotId,
-                            String.format(
-                                    "```\n" +
-                                            "ELO        %d\n" +
-                                            "Peak       %s (%d ELO)\n" +
-                                            "Win Rate   %.1f%%  (%d partidas)\n" +
-                                            "KDA        %.2f\n" +
-                                            "ACS        %.0f\n" +
-                                            "```",
-                                    e.elo, e.peakRank, e.peakElo,
-                                    e.winRate, e.gamesPlayed,
-                                    e.avgKda, e.avgAcs
-                            ),
-                            true
-                    );
+                    embed.addField(pos + "  " + emoji + "  " + e.riotId, String.format("```\n" + "ELO        %d\n" + "Peak       %s (%d ELO)\n" + "Win Rate   %.1f%%  (%d partidas)\n" + "KDA        %.2f\n" + "ACS        %.0f\n" + "```", e.elo, e.peakRank, e.peakElo, e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs), true);
                 }
 
                 embed.setFooter("Ordenado por ELO  •  Última actualización ahora");
@@ -213,17 +190,14 @@ public class ValorantLeaderboardCommand implements Command {
 
                 String playerTeam = mainPlayer.get("team").asText();
                 boolean redWon = teams.get("red").get("has_won").asBoolean();
-                boolean won = (playerTeam.equalsIgnoreCase("Red") && redWon)
-                        || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
+                boolean won = (playerTeam.equalsIgnoreCase("Red") && redWon) || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
                 if (won) wins++;
             }
         }
 
         entry.gamesPlayed = totalGames;
         entry.winRate = totalGames > 0 ? (wins * 100.0 / totalGames) : 0;
-        entry.avgKda = totalDeaths > 0
-                ? (totalKills + totalAssists) / (double) totalDeaths
-                : totalKills + totalAssists;
+        entry.avgKda = totalDeaths > 0 ? (totalKills + totalAssists) / (double) totalDeaths : totalKills + totalAssists;
         entry.avgAcs = totalGames > 0 ? (double) totalAcs / totalGames : 0;
 
         return entry;

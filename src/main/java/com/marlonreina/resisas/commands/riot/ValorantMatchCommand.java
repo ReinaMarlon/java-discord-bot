@@ -201,15 +201,33 @@ public class ValorantMatchCommand implements Command {
      * 15-17=Platinum, 18-20=Diamond, 21-23=Ascendant, 24-26=Immortal, 27=Radiant
      */
     private String getTierEmoji(int tier) {
-        if (tier == 0) return "❓"; // Unranked
-        if (tier <= 5) return "🔘"; // Iron      - gris
-        if (tier <= 8) return "🟤"; // Bronze    - café
-        if (tier <= 11) return "⚪"; // Silver    - blanco/gris claro
-        if (tier <= 14) return "🟡"; // Gold      - amarillo
-        if (tier <= 17) return "🔵"; // Platinum  - azul
-        if (tier <= 20) return "💎"; // Diamond   - azul claro
-        if (tier <= 23) return "🟢"; // Ascendant - verde
-        if (tier <= 26) return "🔴"; // Immortal  - rojo
+        if (tier == 0) {
+            return "❓";
+        }// Unranked
+        if (tier <= 5) {
+            return "🔘";
+        } // Iron      - gris
+        if (tier <= 8) {
+            return "🟤";
+        } // Bronze    - café
+        if (tier <= 11) {
+            return "⚪";
+        } // Silver    - blanco/gris claro
+        if (tier <= 14) {
+            return "🟡";
+        } // Gold      - amarillo
+        if (tier <= 17) {
+            return "🔵";
+        }// Platinum  - azul
+        if (tier <= 20) {
+            return "💎";
+        } // Diamond   - azul claro
+        if (tier <= 23) {
+            return "🟢";
+        } // Ascendant - verde
+        if (tier <= 26) {
+            return "🔴";
+        } // Immortal  - rojo
         return "🏆";                  // Radiant
     }
 }
