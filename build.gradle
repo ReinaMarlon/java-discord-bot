@@ -2,6 +2,10 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'checkstyle'
+    id 'pmd'
+    id 'com.github.spotbugs' version '6.0.26'
+    id 'jacoco'
 }
 
 java {
@@ -24,20 +28,69 @@ dependencies {
     implementation 'net.dv8tion:JDA:5.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.postgresql:postgresql:42.7.7'
-
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
-
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
-
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.apache.groovy:groovy'
 
+    // SpotBugs annotations
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+checkstyle {
+    toolVersion = '10.12.4'
+    configFile = file("config/checkstyle/checkstyle.xml")
+}
+
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+pmd {
+    toolVersion = '6.55.0'
+    consoleOutput = true
+    ignoreFailures = false
+    ruleSets = []
+    ruleSetFiles = files("config/pmd/ruleset.xml")
+}
+
+spotbugs {
+    toolVersion = '4.8.3'
+    ignoreFailures = false
+}
+
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+    reports {
+        html.required = true
+        xml.required = false
+    }
 }

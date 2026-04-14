@@ -1,12 +1,12 @@
 package com.marlonreina.resisas.commands.administrator;
 
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import com.marlonreina.resisas.commands.Command;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.utils.EmbedUtil;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Objects;
 
 public class PrefixCommand implements Command {
@@ -48,7 +48,8 @@ public class PrefixCommand implements Command {
         guildService.changePrefix(guildId, newPrefix);
 
         event.getChannel().sendMessageEmbeds(
-                EmbedUtil.success("Prefijo actualizado a: " + newPrefix).build()
+                EmbedUtil.success("Prefijo actualizado a: "
+                        + newPrefix).build()
         ).queue();
     }
 }

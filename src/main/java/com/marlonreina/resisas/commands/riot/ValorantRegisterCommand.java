@@ -1,8 +1,8 @@
 package com.marlonreina.resisas.commands.riot;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import com.marlonreina.resisas.commands.Command;
 import com.marlonreina.resisas.service.LeaderboardService;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ValorantRegisterCommand implements Command {
 
@@ -21,16 +21,16 @@ public class ValorantRegisterCommand implements Command {
         }
 
         String fullInput = String.join(" ", args);
-        String[] riotId  = fullInput.split("#");
+        String[] riotId = fullInput.split("#");
 
         if (riotId.length < 2) {
             event.getChannel().sendMessage("❌ Formato correcto: `nombre#tag`").queue();
             return;
         }
 
-        String name      = riotId[0].trim();
-        String tag       = riotId[1].trim();
-        String guildId   = event.getGuild().getId();
+        String name = riotId[0].trim();
+        String tag = riotId[1].trim();
+        String guildId = event.getGuild().getId();
         String discordId = event.getAuthor().getId();
 
         boolean saved = leaderboardService.register(guildId, discordId, name, tag);

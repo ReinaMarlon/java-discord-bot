@@ -28,38 +28,59 @@ public class RiotService {
 
     public String getValorantRank(String region, String name, String tag) throws Exception {
         String encodedName = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
-        String encodedTag  = java.net.URLEncoder.encode(tag,  "UTF-8").replace("+", "%20");
+        String encodedTag = java.net.URLEncoder.encode(tag, "UTF-8").replace("+", "%20");
         return get("https://api.henrikdev.xyz/valorant/v1/mmr/"
-                + region + "/" + encodedName + "/" + encodedTag, henrydevKey).body();
+                + region
+                + "/"
+                + encodedName
+                + "/"
+                + encodedTag, henrydevKey).body();
     }
 
-    public String getMMR(String region, String name, String tag) throws Exception {
+    public String getMmR(String region, String name, String tag) throws Exception {
         String encodedName = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
-        String encodedTag  = java.net.URLEncoder.encode(tag,  "UTF-8").replace("+", "%20");
+        String encodedTag = java.net.URLEncoder.encode(tag, "UTF-8").replace("+", "%20");
         return get("https://api.henrikdev.xyz/valorant/v2/mmr/"
-                + region + "/" + encodedName + "/" + encodedTag, henrydevKey).body();
+                + region
+                + "/"
+                + encodedName
+                + "/"
+                + encodedTag, henrydevKey).body();
     }
 
     public String getMatches(String region, String name, String tag) throws Exception {
         String encodedName = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
-        String encodedTag  = java.net.URLEncoder.encode(tag,  "UTF-8").replace("+", "%20");
+        String encodedTag = java.net.URLEncoder.encode(tag, "UTF-8").replace("+", "%20");
         return get("https://api.henrikdev.xyz/valorant/v3/matches/"
-                + region + "/" + encodedName + "/" + encodedTag, henrydevKey).body();
+                + region
+                + "/"
+                + encodedName
+                + "/"
+                + encodedTag, henrydevKey).body();
     }
 
     public String getMatchHistory(String region, String name, String tag, int size) throws Exception {
         String encodedName = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
-        String encodedTag  = java.net.URLEncoder.encode(tag,  "UTF-8").replace("+", "%20");
+        String encodedTag = java.net.URLEncoder.encode(tag, "UTF-8").replace("+", "%20");
         return get("https://api.henrikdev.xyz/valorant/v3/matches/"
-                + region + "/" + encodedName + "/" + encodedTag
-                + "?mode=competitive&size=" + size, henrydevKey).body();
+                + region
+                + "/"
+                + encodedName
+                + "/"
+                + encodedTag
+                + "?mode=competitive&size="
+                + size, henrydevKey).body();
     }
 
-    public String getMMRhistory(String region, String name, String tag) throws Exception {
+    public String getMmRhistory(String region, String name, String tag) throws Exception {
         String encodedName = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
-        String encodedTag  = java.net.URLEncoder.encode(tag,  "UTF-8").replace("+", "%20");
+        String encodedTag = java.net.URLEncoder.encode(tag, "UTF-8").replace("+", "%20");
         return get("https://api.henrikdev.xyz/valorant/v1/mmr-history/"
-                + region + "/" + encodedName + "/" + encodedTag, henrydevKey).body();
+                + region
+                + "/"
+                + encodedName
+                + "/"
+                + encodedTag, henrydevKey).body();
     }
 
 }

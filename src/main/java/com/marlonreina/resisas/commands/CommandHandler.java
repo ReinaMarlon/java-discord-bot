@@ -1,8 +1,15 @@
 package com.marlonreina.resisas.commands;
 
-import com.marlonreina.resisas.commands.administrator.*;
+import com.marlonreina.resisas.commands.administrator.BanCommand;
+import com.marlonreina.resisas.commands.administrator.ClearCommand;
+import com.marlonreina.resisas.commands.administrator.KickCommand;
+import com.marlonreina.resisas.commands.administrator.PrefixCommand;
 import com.marlonreina.resisas.commands.misc.HelpCommand;
-import com.marlonreina.resisas.commands.riot.*;
+import com.marlonreina.resisas.commands.riot.ValorantLeaderboardCommand;
+import com.marlonreina.resisas.commands.riot.ValorantMatchCommand;
+import com.marlonreina.resisas.commands.riot.ValorantPlayerCommand;
+import com.marlonreina.resisas.commands.riot.ValorantRankCommand;
+import com.marlonreina.resisas.commands.riot.ValorantRegisterCommand;
 import com.marlonreina.resisas.commands.test.PingCommand;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.service.LeaderboardService;
@@ -56,12 +63,16 @@ public class CommandHandler {
 
         String msg = event.getMessage().getContentRaw().trim();
 
-        if (!msg.startsWith(prefix)) return;
+        if (!msg.startsWith(prefix)) {
+            return;
+        }
 
         String body = msg.substring(prefix.length()).trim();
         String[] parts = body.split("\\s+");
 
-        if (parts.length == 0 || parts[0].isBlank()) return;
+        if (parts.length == 0 || parts[0].isBlank()) {
+            return;
+        }
 
         String commandName = parts[0].toLowerCase();
         Command command = commands.get(commandName);

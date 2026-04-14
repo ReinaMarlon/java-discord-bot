@@ -2,12 +2,12 @@ package com.marlonreina.resisas.commands.riot;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import com.marlonreina.resisas.commands.Command;
 import com.marlonreina.resisas.service.RiotService;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class ValorantRankCommand implements Command {
 
@@ -48,8 +48,8 @@ public class ValorantRankCommand implements Command {
 
             JsonNode data = root.get("data");
 
-            String rank = data.get("currenttierpatched").asText();
-            int rr = data.get("ranking_in_tier").asInt();
+            // String rank = data.get("currenttierpatched").asText();
+            // int rr = data.get("ranking_in_tier").asInt();
             int lastGame = data.get("mmr_change_to_last_game").asInt();
 
             EmbedBuilder embed = new EmbedBuilder();

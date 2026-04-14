@@ -1,8 +1,8 @@
 package com.marlonreina.resisas.commands.administrator;
 
+import com.marlonreina.resisas.commands.Command;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import com.marlonreina.resisas.commands.Command;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -11,7 +11,7 @@ public class BanCommand implements Command {
     @Override
     public void execute(MessageReceivedEvent event, String[] args) {
 
-        if(Objects.requireNonNull(event.getMember()).hasPermission(Permission.BAN_MEMBERS)) {
+        if (Objects.requireNonNull(event.getMember()).hasPermission(Permission.BAN_MEMBERS)) {
             event.getChannel().sendMessage("No tienes permisos para realizar esta acción.").queue();
             return;
         }

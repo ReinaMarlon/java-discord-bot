@@ -1,8 +1,8 @@
 package com.marlonreina.resisas.commands.administrator;
 
+import com.marlonreina.resisas.commands.Command;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import com.marlonreina.resisas.commands.Command;
 
 public class KickCommand implements Command {
 
