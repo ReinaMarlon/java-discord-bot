@@ -48,8 +48,8 @@ public class ValorantRankCommand implements Command {
 
             JsonNode data = root.get("data");
 
-            String rank = data.get("currenttierpatched").asText();
-            int rr = data.get("ranking_in_tier").asInt();
+            // String rank = data.get("currenttierpatched").asText();
+            // int rr = data.get("ranking_in_tier").asInt();
             int lastGame = data.get("mmr_change_to_last_game").asInt();
 
             EmbedBuilder embed = new EmbedBuilder();

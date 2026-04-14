@@ -117,7 +117,7 @@ public class ValorantLeaderboardCommand implements Command {
                     String mmrStr = e.mmrChange >= 0 ? "▲+" + e.mmrChange : "▼" + e.mmrChange;
 
                     board.append(String.format(
-                            "%s %s %s **%s** · `%d RR` %s\n",
+                            "%s %s %s **%s** · `%d RR` %s%n",
                             pos, rankEmoji, e.rankPatched, e.riotId, e.rr, mmrStr
                     ));
                 }
@@ -133,12 +133,12 @@ public class ValorantLeaderboardCommand implements Command {
                     embed.addField(
                             pos + " " + emoji + " " + e.riotId,
                             String.format(
-                                    "```\n"
-                                            + "ELO        %d\n"
-                                            + "Peak       %s (%d ELO)\n"
-                                            + "Win Rate   %.1f%% (%d partidas)\n"
-                                            + "KDA        %.2f\n"
-                                            + "ACS        %.0f\n"
+                                    "```%n"
+                                            + "ELO        %d%n"
+                                            + "Peak       %s (%d ELO)%n"
+                                            + "Win Rate   %.1f%% (%d partidas)%n"
+                                            + "KDA        %.2f%n"
+                                            + "ACS        %.0f%n"
                                             + "```",
                                     e.elo, e.peakRank, e.peakElo,
                                     e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs

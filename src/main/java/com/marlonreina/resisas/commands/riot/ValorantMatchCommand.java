@@ -145,7 +145,7 @@ public class ValorantMatchCommand implements Command {
                 String suffix = isMain ? "**" : "";
 
                 String line = String.format(
-                        "%s%s %s | %s | %d/%d/%d | ACS %d%s\n",
+                        "%s%s %s | %s | %d/%d/%d | ACS %d%s%n",
                         prefix, tierEmoji, playerAgent, playerName,
                         pk, pd, pa, playerAcs, suffix
                 );
@@ -180,14 +180,14 @@ public class ValorantMatchCommand implements Command {
             embed.addField(
                     "👤 " + name + "#" + tag + " — " + agent + " " + rankEmoji + " " + rank,
                     String.format(
-                            "```\n"
-                                    + "K / D / A     %d / %d / %d\n"
-                                    + "KDA Ratio     %.2f\n"
-                                    + "ACS           %d\n"
-                                    + "Score         %d\n"
-                                    + "HS%%           %.1f%%\n"
-                                    + "Daño hecho    %d\n"
-                                    + "Daño recibido %d\n"
+                            "```%n"
+                                    + "K / D / A     %d / %d / %d%n"
+                                    + "KDA Ratio     %.2f%n"
+                                    + "ACS           %d%n"
+                                    + "Score         %d%n"
+                                    + "HS%%           %.1f%%%n"
+                                    + "Daño hecho    %d%n"
+                                    + "Daño recibido %d%n"
                                     + "```",
                             kills, deaths, assists, kda, acs, score, hsPercent, dmgMade, dmgReceived
                     ),
