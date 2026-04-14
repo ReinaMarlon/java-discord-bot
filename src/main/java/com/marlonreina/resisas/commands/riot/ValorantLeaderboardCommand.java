@@ -13,6 +13,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ValorantLeaderboardCommand implements Command {
 
@@ -39,10 +46,10 @@ public class ValorantLeaderboardCommand implements Command {
                 + accounts.size()
                 + " cuenta(s), espera un momento...").queue(loadingMsg -> {
             try {
-                List<PlayerEntry> entries = new java.util.concurrent.CopyOnWriteArrayList<>();
-                java.util.concurrent.ExecutorService executor =
-                        java.util.concurrent.Executors.newFixedThreadPool(Math.min(accounts.size(), 10));
-                List<java.util.concurrent.Future<?>> futures = new ArrayList<>();
+                List<PlayerEntry> entries = new CopyOnWriteArrayList<>();
+                ExecutorService executor =
+                        Executors.newFixedThreadPool(Math.min(accounts.size(), 10));
+                List<Future<?>> futures = new ArrayList<>();
 
                 for (LeaderboardAccount acc : accounts) {
                     futures.add(executor.submit(() -> {
@@ -60,13 +67,13 @@ public class ValorantLeaderboardCommand implements Command {
                     }));
                 }
 
-                for (java.util.concurrent.Future<?> f : futures) {
+                for (Future<?> f : futures) {
                     try {
-                        f.get(60, java.util.concurrent.TimeUnit.SECONDS);
-                    } catch (java.util.concurrent.ExecutionException e) {
+                        f.get(60, TimeUnit.SECONDS);
+                    } catch (ExecutionException e) {
                         System.err.println("Error en hilo: " + e.getCause());
                         e.getCause().printStackTrace();
-                    } catch (java.util.concurrent.TimeoutException e) {
+                    } catch (TimeoutException e) {
                         System.err.println("Timeout esperando respuesta de la API");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -85,7 +92,7 @@ public class ValorantLeaderboardCommand implements Command {
                         + event.getGuild().getName());
                 embed.setThumbnail(event.getJDA().getSelfUser().getEffectiveAvatarUrl());
                 StringBuilder board = new StringBuilder();
-                String[] medals = {"🥇", "🥈", "🥉"};
+                final String[] medals = {"🥇", "🥈", "🥉"};
 
                 for (int i = 0; i < entries.size(); i++) {
                     PlayerEntry e = entries.get(i);
@@ -108,12 +115,18 @@ public class ValorantLeaderboardCommand implements Command {
                             + (i + 1);
                     String emoji = getTierEmoji(e.tier);
                     embed.addField(pos
-                            + "  " + emoji
-                            + "  " + e.riotId, String.format("```\n"
-                            + "ELO        %d\n" + "Peak       %s (%d ELO)\n" + "Win Rate   %.1f%%  (%d partidas)\n"
-                            + "KDA        %.2f\n"
-                            + "ACS        %.0f\n"
-                            + "```", e.elo, e.peakRank, e.peakElo, e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs), true);
+                                    + "  " + emoji
+                                    + "  " + e.riotId,
+                            String.format("```\n"
+                                            + "ELO        %d\n"
+                                            + "Peak       %s (%d ELO)\n"
+                                            + "Win Rate   %.1f%%  (%d partidas)\n"
+                                            + "KDA        %.2f\n"
+                                            + "ACS        %.0f\n"
+                                            + "```",
+                                    e.elo, e.peakRank, e.peakElo,
+                                    e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs),
+                            true);
                 }
                 embed.setFooter("Ordenado por ELO  •  Última actualización ahora");
                 loadingMsg.delete().queue();
@@ -168,9 +181,9 @@ public class ValorantLeaderboardCommand implements Command {
                 if (!match.get("metadata").get("mode_id").asText().equals("competitive")) {
                     continue;
                 }
-                int roundsPlayed = match.get("metadata").get("rounds_played").asInt(1);
                 JsonNode players = match.get("players").get("all_players");
-                JsonNode teams = match.get("teams");
+                final JsonNode teams = match.get("teams");
+                final int roundsPlayed = match.get("metadata").get("rounds_played").asInt(1);
                 JsonNode mainPlayer = null;
                 for (JsonNode p : players) {
                     if (p.get("name").asText().equalsIgnoreCase(name)) {
@@ -186,7 +199,7 @@ public class ValorantLeaderboardCommand implements Command {
                 int k = stats.get("kills").asInt();
                 int d = stats.get("deaths").asInt();
                 int a = stats.get("assists").asInt();
-                int s = stats.get("score").asInt();
+                final int s = stats.get("score").asInt();
                 totalKills += k;
                 totalDeaths += d;
                 totalAssists += a;
@@ -195,7 +208,9 @@ public class ValorantLeaderboardCommand implements Command {
                 boolean redWon = teams.get("red").get("has_won").asBoolean();
                 boolean won = (playerTeam.equalsIgnoreCase("Red") && redWon)
                         || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
-                if (won) wins++;
+                if (won) {
+                    wins++;
+                }
             }
         }
         entry.gamesPlayed = totalGames;

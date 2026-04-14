@@ -21,7 +21,7 @@ public class ValorantMatchCommand implements Command {
             "💠", "💠", "💠",           // Diamond
             "🔷", "🔷", "🔷",           // Ascendant
             "💎", "💎", "💎",           // Immortal
-            "🏆"                       // Radiant
+            "🏆"                        // Radiant
     };
     private final RiotService riotService;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -39,7 +39,7 @@ public class ValorantMatchCommand implements Command {
         }
 
         try {
-            String fullInput = String.join(" ", args); // "nombre#RS シ" aunque tenga espacios
+            String fullInput = String.join(" ", args);
             String[] riotId = fullInput.split("#");
 
             if (riotId.length < 2) {
@@ -56,18 +56,18 @@ public class ValorantMatchCommand implements Command {
 
             // ── Metadata ──────────────────────────────────────────────
             JsonNode meta = match.get("metadata");
-            String map = meta.get("map").asText();
-            String mode = meta.get("mode").asText();
             int roundsPlayed = meta.get("rounds_played").asInt();
-            String startTime = meta.get("game_start_patched").asText();
+            final String map = meta.get("map").asText();
+            final String mode = meta.get("mode").asText();
+            final String startTime = meta.get("game_start_patched").asText();
 
             // ── Resultado del partido ──────────────────────────────────
             JsonNode teams = match.get("teams");
             JsonNode redTeam = teams.get("red");
             JsonNode blueTeam = teams.get("blue");
-            int redWins = redTeam.get("rounds_won").asInt();
-            int blueWins = blueTeam.get("rounds_won").asInt();
             boolean redWon = redTeam.get("has_won").asBoolean();
+            final int redWins = redTeam.get("rounds_won").asInt();
+            final int blueWins = blueTeam.get("rounds_won").asInt();
 
             // ── Jugador consultado ─────────────────────────────────────
             JsonNode players = match.get("players").get("all_players");
@@ -85,10 +85,10 @@ public class ValorantMatchCommand implements Command {
                 return;
             }
 
-            String playerTeam = mainPlayer.get("team").asText();          // "Red" o "Blue"
-            String agent = mainPlayer.get("character").asText();
-            String rank = mainPlayer.get("currenttier_patched").asText();
+            String playerTeam = mainPlayer.get("team").asText();
             int tier = mainPlayer.get("currenttier").asInt();
+            final String agent = mainPlayer.get("character").asText();
+            final String rank = mainPlayer.get("currenttier_patched").asText();
             String agentIconUrl = mainPlayer.get("assets").get("agent").get("small").asText();
 
             JsonNode stats = mainPlayer.get("stats");
@@ -100,17 +100,16 @@ public class ValorantMatchCommand implements Command {
             int bs = stats.get("bodyshots").asInt();
             int ls = stats.get("legshots").asInt();
             int totalShots = hs + bs + ls;
-            double hsPercent = totalShots > 0 ? (hs * 100.0 / totalShots) : 0;
-
             int dmgMade = mainPlayer.get("damage_made").asInt();
             int dmgReceived = mainPlayer.get("damage_received").asInt();
             int acs = score / Math.max(roundsPlayed, 1);
             double kda = (kills + assists) / (double) Math.max(deaths, 1);
+            final double hsPercent = totalShots > 0 ? (hs * 100.0 / totalShots) : 0;
 
             // Ganó o perdió?
             boolean mainWon = (playerTeam.equalsIgnoreCase("Red") && redWon)
                     || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
-            String resultado = mainWon ? "✅ Victoria" : "❌ Derrota";
+            final String resultado = mainWon ? "✅ Victoria" : "❌ Derrota";
             Color embedColor = mainWon ? new Color(0x2ECC71) : new Color(0xE74C3C);
 
             // ── Construcción de líneas por equipo ──────────────────────
@@ -118,25 +117,24 @@ public class ValorantMatchCommand implements Command {
             StringBuilder blueBuilder = new StringBuilder();
 
             for (JsonNode p : players) {
-                String pName = p.get("name").asText() + "#" + p.get("tag").asText();
-                String pAgent = p.get("character").asText();
-                String pRank = p.get("currenttier_patched").asText();
-                int pTier = p.get("currenttier").asInt();
-                JsonNode pStats = p.get("stats");
-                int pk = pStats.get("kills").asInt();
-                int pd = pStats.get("deaths").asInt();
-                int pa = pStats.get("assists").asInt();
-                int ps = pStats.get("score").asInt();
-                int pAcs = ps / Math.max(roundsPlayed, 1);
-                String tierEmoji = getTierEmoji(pTier);
+                String playerName = p.get("name").asText() + "#" + p.get("tag").asText();
+                String playerAgent = p.get("character").asText();
+                String playerRank = p.get("currenttier_patched").asText();
+                int playerTier = p.get("currenttier").asInt();
+                JsonNode playerStats = p.get("stats");
+                int pk = playerStats.get("kills").asInt();
+                int pd = playerStats.get("deaths").asInt();
+                int pa = playerStats.get("assists").asInt();
+                int ps = playerStats.get("score").asInt();
+                int playerAcs = ps / Math.max(roundsPlayed, 1);
+                String tierEmoji = getTierEmoji(playerTier);
 
-                // Marca al jugador principal con ★
                 boolean isMain = p.get("name").asText().equalsIgnoreCase(name);
                 String prefix = isMain ? "**★ " : "";
                 String suffix = isMain ? "**" : "";
 
                 String line = String.format("%s%s %s | %s | %d/%d/%d | ACS %d%s\n",
-                        prefix, tierEmoji, pAgent, pName, pk, pd, pa, pAcs, suffix);
+                        prefix, tierEmoji, playerAgent, playerName, pk, pd, pa, playerAcs, suffix);
 
                 if (p.get("team").asText().equalsIgnoreCase("Red")) {
                     redBuilder.append(line);
@@ -171,7 +169,6 @@ public class ValorantMatchCommand implements Command {
                             + scoreLine
             );
 
-            // Jugador principal
             embed.addField(
                     "👤 "
                             + name
@@ -189,7 +186,6 @@ public class ValorantMatchCommand implements Command {
                                     + "KDA Ratio     %.2f\n"
                                     + "ACS           %d\n"
                                     + "Score         %d\n"
-
                                     + "HS%%           %.1f%%\n"
                                     + "Daño hecho    %d\n"
                                     + "Daño recibido %d\n"
@@ -199,7 +195,6 @@ public class ValorantMatchCommand implements Command {
                     false
             );
 
-            // Equipos
             embed.addField("🔴  Team Red", redBuilder.toString(), false);
             embed.addField("🔵  Team Blue", blueBuilder.toString(), false);
 
@@ -221,31 +216,32 @@ public class ValorantMatchCommand implements Command {
     private String getTierEmoji(int tier) {
         if (tier == 0) {
             return "❓";
-        }// Unranked
+        }
         if (tier <= 5) {
             return "🔘";
-        } // Iron      - gris
+        }
         if (tier <= 8) {
             return "🟤";
-        } // Bronze    - café
+        }
         if (tier <= 11) {
             return "⚪";
-        } // Silver    - blanco/gris claro
+        }
         if (tier <= 14) {
             return "🟡";
-        } // Gold      - amarillo
+        }
         if (tier <= 17) {
             return "🔵";
-        }// Platinum  - azul
+        }
         if (tier <= 20) {
             return "💎";
-        } // Diamond   - azul claro
+        }
         if (tier <= 23) {
             return "🟢";
-        } // Ascendant - verde
+        }
         if (tier <= 26) {
             return "🔴";
-        } // Immortal  - rojo
-        return "🏆";                  // Radiant
+        }
+        return "🏆";
     }
+
 }

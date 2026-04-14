@@ -63,12 +63,16 @@ public class CommandHandler {
 
         String msg = event.getMessage().getContentRaw().trim();
 
-        if (!msg.startsWith(prefix)) return;
+        if (!msg.startsWith(prefix)) {
+            return;
+        }
 
         String body = msg.substring(prefix.length()).trim();
         String[] parts = body.split("\\s+");
 
-        if (parts.length == 0 || parts[0].isBlank()) return;
+        if (parts.length == 0 || parts[0].isBlank()) {
+            return;
+        }
 
         String commandName = parts[0].toLowerCase();
         Command command = commands.get(commandName);
