@@ -7,9 +7,11 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import org.springframework.stereotype.Component;
 
 import java.awt.Color;
 
+@Component
 public class HelpInteractionListener extends ListenerAdapter {
 
     private final GuildService guildService;
