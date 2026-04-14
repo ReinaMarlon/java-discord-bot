@@ -72,15 +72,24 @@ public class HelpInteractionListener extends ListenerAdapter {
 
         StringSelectMenu menu = StringSelectMenu.create("help:select")
                 .setPlaceholder("📋 Selecciona un comando...")
-                .addOption("ping", "help:cmd:ping", "Comprueba la latencia del bot", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
-                .addOption("prefix", "help:cmd:prefix", "Cambia el prefijo del servidor", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
-                .addOption("help", "help:cmd:help", "Muestra esta ayuda", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
-                .addOption("clear", "help:cmd:clear", "Elimina mensajes del canal", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
-                .addOption("kick", "help:cmd:kick", "Expulsa a un miembro", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
-                .addOption("ban", "help:cmd:ban", "Banea a un miembro", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
-                .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
-                .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
-                .addOption("vmatch", "help:cmd:vmatch", "Última partida de un jugador", net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
+                .addOption("ping", "help:cmd:ping", "Comprueba la latencia del bot",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
+                .addOption("prefix", "help:cmd:prefix", "Cambia el prefijo del servidor",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
+                .addOption("help", "help:cmd:help", "Muestra esta ayuda",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
+                .addOption("clear", "help:cmd:clear", "Elimina mensajes del canal",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
+                .addOption("kick", "help:cmd:kick", "Expulsa a un miembro",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
+                .addOption("ban", "help:cmd:ban", "Banea a un miembro",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
+                .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
+                .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
+                .addOption("vmatch", "help:cmd:vmatch", "Última partida de un jugador",
+                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
                 .build();
 
         event.editMessageEmbeds(embed.build())

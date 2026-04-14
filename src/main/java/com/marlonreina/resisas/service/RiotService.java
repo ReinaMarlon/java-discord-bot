@@ -37,7 +37,7 @@ public class RiotService {
                 + encodedTag, henrydevKey).body();
     }
 
-    public String getMMR(String region, String name, String tag) throws Exception {
+    public String getMmR(String region, String name, String tag) throws Exception {
         String encodedName = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
         String encodedTag = java.net.URLEncoder.encode(tag, "UTF-8").replace("+", "%20");
         return get("https://api.henrikdev.xyz/valorant/v2/mmr/"
@@ -72,7 +72,7 @@ public class RiotService {
                 + size, henrydevKey).body();
     }
 
-    public String getMMRhistory(String region, String name, String tag) throws Exception {
+    public String getMmRhistory(String region, String name, String tag) throws Exception {
         String encodedName = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
         String encodedTag = java.net.URLEncoder.encode(tag, "UTF-8").replace("+", "%20");
         return get("https://api.henrikdev.xyz/valorant/v1/mmr-history/"

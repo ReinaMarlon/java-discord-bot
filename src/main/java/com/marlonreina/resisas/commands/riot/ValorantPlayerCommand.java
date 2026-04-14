@@ -39,7 +39,7 @@ public class ValorantPlayerCommand implements Command {
                 String name = riotId[0].trim();
                 String tag = riotId[1].trim();
 
-                String mmrHistoryJson = riotService.getMMRhistory("latam", name, tag);
+                String mmrHistoryJson = riotService.getMmRhistory("latam", name, tag);
                 String matchesJson = riotService.getMatchHistory("latam", name, tag, 10);
 
                 JsonNode mmrRoot = mapper.readTree(mmrHistoryJson);
