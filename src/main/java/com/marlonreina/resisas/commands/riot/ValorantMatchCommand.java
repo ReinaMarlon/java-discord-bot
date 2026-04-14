@@ -13,16 +13,17 @@ public class ValorantMatchCommand implements Command {
 
     // Emojis de rango aproximado por tier
     private static final String[] TIER_EMOJIS = {
-            "⬜", "⬜", "⬜",           // Unranked / Iron
-            "🟫", "🟫", "🟫",           // Bronze
-            "⬛", "⬛", "⬛",           // Silver
-            "🟨", "🟨", "🟨",           // Gold
-            "🟦", "🟦", "🟦",           // Platinum
-            "💠", "💠", "💠",           // Diamond
-            "🔷", "🔷", "🔷",           // Ascendant
-            "💎", "💎", "💎",           // Immortal
-            "🏆"                        // Radiant
+            "⬜", "⬜", "⬜",
+            "🟫", "🟫", "🟫",
+            "⬛", "⬛", "⬛",
+            "🟨", "🟨", "🟨",
+            "🟦", "🟦", "🟦",
+            "💠", "💠", "💠",
+            "🔷", "🔷", "🔷",
+            "💎", "💎", "💎",
+            "🏆"
     };
+
     private final RiotService riotService;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -54,22 +55,24 @@ public class ValorantMatchCommand implements Command {
             JsonNode root = mapper.readTree(json);
             JsonNode match = root.get("data").get(0);
 
-            // ── Metadata ──────────────────────────────────────────────
+            // ── Metadata ─────────────────────────
             JsonNode meta = match.get("metadata");
             int roundsPlayed = meta.get("rounds_played").asInt();
+
             final String map = meta.get("map").asText();
             final String mode = meta.get("mode").asText();
             final String startTime = meta.get("game_start_patched").asText();
 
-            // ── Resultado del partido ──────────────────────────────────
+            // ── Resultado ────────────────────────
             JsonNode teams = match.get("teams");
             JsonNode redTeam = teams.get("red");
             JsonNode blueTeam = teams.get("blue");
+
             boolean redWon = redTeam.get("has_won").asBoolean();
             final int redWins = redTeam.get("rounds_won").asInt();
             final int blueWins = blueTeam.get("rounds_won").asInt();
 
-            // ── Jugador consultado ─────────────────────────────────────
+            // ── Jugador ──────────────────────────
             JsonNode players = match.get("players").get("all_players");
             JsonNode mainPlayer = null;
 
@@ -87,54 +90,66 @@ public class ValorantMatchCommand implements Command {
 
             String playerTeam = mainPlayer.get("team").asText();
             int tier = mainPlayer.get("currenttier").asInt();
+
             final String agent = mainPlayer.get("character").asText();
             final String rank = mainPlayer.get("currenttier_patched").asText();
             String agentIconUrl = mainPlayer.get("assets").get("agent").get("small").asText();
 
             JsonNode stats = mainPlayer.get("stats");
+
             int kills = stats.get("kills").asInt();
             int deaths = stats.get("deaths").asInt();
             int assists = stats.get("assists").asInt();
             int score = stats.get("score").asInt();
+
             int hs = stats.get("headshots").asInt();
             int bs = stats.get("bodyshots").asInt();
             int ls = stats.get("legshots").asInt();
+
             int totalShots = hs + bs + ls;
-            int dmgMade = mainPlayer.get("damage_made").asInt();
-            int dmgReceived = mainPlayer.get("damage_received").asInt();
-            int acs = score / Math.max(roundsPlayed, 1);
-            double kda = (kills + assists) / (double) Math.max(deaths, 1);
+
+            final int dmgMade = mainPlayer.get("damage_made").asInt();
+            final int dmgReceived = mainPlayer.get("damage_received").asInt();
+            final int acs = score / Math.max(roundsPlayed, 1);
+            final double kda = (kills + assists) / (double) Math.max(deaths, 1);
             final double hsPercent = totalShots > 0 ? (hs * 100.0 / totalShots) : 0;
 
-            // Ganó o perdió?
             boolean mainWon = (playerTeam.equalsIgnoreCase("Red") && redWon)
                     || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
+
             final String resultado = mainWon ? "✅ Victoria" : "❌ Derrota";
             Color embedColor = mainWon ? new Color(0x2ECC71) : new Color(0xE74C3C);
 
-            // ── Construcción de líneas por equipo ──────────────────────
+            // ── Equipos ──────────────────────────
             StringBuilder redBuilder = new StringBuilder();
             StringBuilder blueBuilder = new StringBuilder();
 
             for (JsonNode p : players) {
+
                 String playerName = p.get("name").asText() + "#" + p.get("tag").asText();
                 String playerAgent = p.get("character").asText();
-                String playerRank = p.get("currenttier_patched").asText();
                 int playerTier = p.get("currenttier").asInt();
+
                 JsonNode playerStats = p.get("stats");
+
                 int pk = playerStats.get("kills").asInt();
                 int pd = playerStats.get("deaths").asInt();
                 int pa = playerStats.get("assists").asInt();
                 int ps = playerStats.get("score").asInt();
+
                 int playerAcs = ps / Math.max(roundsPlayed, 1);
+
                 String tierEmoji = getTierEmoji(playerTier);
 
                 boolean isMain = p.get("name").asText().equalsIgnoreCase(name);
                 String prefix = isMain ? "**★ " : "";
                 String suffix = isMain ? "**" : "";
 
-                String line = String.format("%s%s %s | %s | %d/%d/%d | ACS %d%s\n",
-                        prefix, tierEmoji, playerAgent, playerName, pk, pd, pa, playerAcs, suffix);
+                String line = String.format(
+                        "%s%s %s | %s | %d/%d/%d | ACS %d%s\n",
+                        prefix, tierEmoji, playerAgent, playerName,
+                        pk, pd, pa, playerAcs, suffix
+                );
 
                 if (p.get("team").asText().equalsIgnoreCase("Red")) {
                     redBuilder.append(line);
@@ -143,43 +158,28 @@ public class ValorantMatchCommand implements Command {
                 }
             }
 
-            // ── Marcador ──────────────────────────────────────────────
-            String scoreLine = String.format("🔴 Red **%d** — **%d** Blue 🔵", redWins, blueWins);
+            String scoreLine = String.format(
+                    "🔴 Red **%d** — **%d** Blue 🔵",
+                    redWins, blueWins
+            );
 
-            // ── Rango emoji jugador principal ─────────────────────────
             String rankEmoji = getTierEmoji(tier);
 
-            // ── Embed ─────────────────────────────────────────────────
+            // ── Embed ────────────────────────────
             EmbedBuilder embed = new EmbedBuilder();
             embed.setColor(embedColor);
             embed.setThumbnail(agentIconUrl);
 
-            embed.setTitle(resultado
-                    + "  |  "
-                    + map
-                    + "  ·  "
-                    + mode);
+            embed.setTitle(resultado + " | " + map + " · " + mode);
+
             embed.setDescription(
-                    "🕐 "
-                            + startTime
-                            + "\n"
-                            + "🗺️ Rondas jugadas: **"
-                            + roundsPlayed
-                            + "**\n"
+                    "🕐 " + startTime + "\n"
+                            + "🗺️ Rondas: **" + roundsPlayed + "**\n"
                             + scoreLine
             );
 
             embed.addField(
-                    "👤 "
-                            + name
-                            + "#"
-                            + tag
-                            + "  —  "
-                            + agent
-                            + "  "
-                            + rankEmoji
-                            + " "
-                            + rank,
+                    "👤 " + name + "#" + tag + " — " + agent + " " + rankEmoji + " " + rank,
                     String.format(
                             "```\n"
                                     + "K / D / A     %d / %d / %d\n"
@@ -195,53 +195,29 @@ public class ValorantMatchCommand implements Command {
                     false
             );
 
-            embed.addField("🔴  Team Red", redBuilder.toString(), false);
-            embed.addField("🔵  Team Blue", blueBuilder.toString(), false);
+            embed.addField("🔴 Team Red", redBuilder.toString(), false);
+            embed.addField("🔵 Team Blue", blueBuilder.toString(), false);
 
             embed.setFooter("Valorant Match · " + map);
 
             event.getChannel().sendMessageEmbeds(embed.build()).queue();
 
         } catch (Exception e) {
-            event.getChannel().sendMessage("❌ Error obteniendo la partida. Verifica el nombre#tag.").queue();
+            event.getChannel().sendMessage("❌ Error obteniendo la partida.").queue();
             e.printStackTrace();
         }
     }
 
-    /**
-     * Devuelve un emoji representativo según el tier numérico de Valorant.
-     * Tiers: 0=Unranked, 3-5=Iron, 6-8=Bronze, 9-11=Silver, 12-14=Gold,
-     * 15-17=Platinum, 18-20=Diamond, 21-23=Ascendant, 24-26=Immortal, 27=Radiant
-     */
     private String getTierEmoji(int tier) {
-        if (tier == 0) {
-            return "❓";
-        }
-        if (tier <= 5) {
-            return "🔘";
-        }
-        if (tier <= 8) {
-            return "🟤";
-        }
-        if (tier <= 11) {
-            return "⚪";
-        }
-        if (tier <= 14) {
-            return "🟡";
-        }
-        if (tier <= 17) {
-            return "🔵";
-        }
-        if (tier <= 20) {
-            return "💎";
-        }
-        if (tier <= 23) {
-            return "🟢";
-        }
-        if (tier <= 26) {
-            return "🔴";
-        }
+        if (tier == 0) return "❓";
+        if (tier <= 5) return "🔘";
+        if (tier <= 8) return "🟤";
+        if (tier <= 11) return "⚪";
+        if (tier <= 14) return "🟡";
+        if (tier <= 17) return "🔵";
+        if (tier <= 20) return "💎";
+        if (tier <= 23) return "🟢";
+        if (tier <= 26) return "🔴";
         return "🏆";
     }
-
 }
