@@ -13,17 +13,16 @@ public class ValorantMatchCommand implements Command {
 
     // Emojis de rango aproximado por tier
     private static final String[] TIER_EMOJIS = {
-            "⬜", "⬜", "⬜",
-            "🟫", "🟫", "🟫",
-            "⬛", "⬛", "⬛",
-            "🟨", "🟨", "🟨",
-            "🟦", "🟦", "🟦",
-            "💠", "💠", "💠",
-            "🔷", "🔷", "🔷",
-            "💎", "💎", "💎",
-            "🏆"
+        "⬜", "⬜", "⬜",
+        "🟫", "🟫", "🟫",
+        "⬛", "⬛", "⬛",
+        "🟨", "🟨", "🟨",
+        "🟦", "🟦", "🟦",
+        "💠", "💠", "💠",
+        "🔷", "🔷", "🔷",
+        "💎", "💎", "💎",
+        "🏆"
     };
-
     private final RiotService riotService;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -209,15 +208,33 @@ public class ValorantMatchCommand implements Command {
     }
 
     private String getTierEmoji(int tier) {
-        if (tier == 0) return "❓";
-        if (tier <= 5) return "🔘";
-        if (tier <= 8) return "🟤";
-        if (tier <= 11) return "⚪";
-        if (tier <= 14) return "🟡";
-        if (tier <= 17) return "🔵";
-        if (tier <= 20) return "💎";
-        if (tier <= 23) return "🟢";
-        if (tier <= 26) return "🔴";
+        if (tier == 0) {
+            return "❓";
+        }
+        if (tier <= 5) {
+            return "🔘";
+        }
+        if (tier <= 8) {
+            return "🟤";
+        }
+        if (tier <= 11) {
+            return "⚪";
+        }
+        if (tier <= 14) {
+            return "🟡";
+        }
+        if (tier <= 17) {
+            return "🔵";
+        }
+        if (tier <= 20) {
+            return "💎";
+        }
+        if (tier <= 23) {
+            return "🟢";
+        }
+        if (tier <= 26) {
+            return "🔴";
+        }
         return "🏆";
     }
 }

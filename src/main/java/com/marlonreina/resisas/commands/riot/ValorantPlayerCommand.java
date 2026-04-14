@@ -75,14 +75,22 @@ public class ValorantPlayerCommand implements Command {
 
                 final int oldestElo = mmrData.get(mmrData.size() - 1).get("elo").asInt(currentElo);
                 final int eloChange = currentElo - oldestElo;
-                final String eloChangeStr = eloChange >= 0 ? "▲ +" + eloChange : "▼ " + eloChange;
+                final String eloChangeStr = eloChange >= 0 ? "▲ +"
+                        + eloChange : "▼ "
+                        + eloChange;
 
                 JsonNode matches = matchesRoot.get("data");
 
-                int totalGames = 0, wins = 0, losses = 0;
-                int totalKills = 0, totalDeaths = 0, totalAssists = 0;
-                int totalAcs = 0, totalDmg = 0;
-                int aces = 0, clutches = 0;
+                int totalGames = 0;
+                int wins = 0;
+                int losses = 0;
+                int totalKills = 0;
+                int totalDeaths = 0;
+                int totalAssists = 0;
+                int totalAcs = 0;
+                int totalDmg = 0;
+                int aces = 0;
+                int clutches = 0;
 
                 String agentIconUrl = null;
                 Map<String, Integer> agentCount = new HashMap<>();
@@ -142,11 +150,15 @@ public class ValorantPlayerCommand implements Command {
                         if (rounds != null) {
                             for (JsonNode round : rounds) {
                                 JsonNode playerStats = round.get("player_stats");
-                                if (playerStats == null) continue;
+                                if (playerStats == null) {
+                                    continue;
+                                }
 
                                 for (JsonNode ps : playerStats) {
                                     if (!ps.get("player_puuid").asText()
-                                            .equals(mainPlayer.get("puuid").asText())) continue;
+                                            .equals(mainPlayer.get("puuid").asText())) {
+                                        continue;
+                                    }
 
                                     int roundKills = ps.get("kills").asInt(0);
 
@@ -157,7 +169,9 @@ public class ValorantPlayerCommand implements Command {
                                         if (killEvents != null) {
                                             for (JsonNode ke : killEvents) {
                                                 JsonNode locs = ke.get("player_locations_on_kill");
-                                                if (locs == null) continue;
+                                                if (locs == null) {
+                                                    continue;
+                                                }
 
                                                 long aliveTeammates = 0;
                                                 for (JsonNode loc : locs) {
@@ -246,15 +260,33 @@ public class ValorantPlayerCommand implements Command {
     }
 
     private String getTierEmoji(int tier) {
-        if (tier == 0) return "❓";
-        if (tier <= 5) return "🔘";
-        if (tier <= 8) return "🟤";
-        if (tier <= 11) return "⚪";
-        if (tier <= 14) return "🟡";
-        if (tier <= 17) return "🔵";
-        if (tier <= 20) return "💎";
-        if (tier <= 23) return "🟢";
-        if (tier <= 26) return "🔴";
+        if (tier == 0) {
+            return "❓";
+        }
+        if (tier <= 5) {
+            return "🔘";
+        }
+        if (tier <= 8) {
+            return "🟤";
+        }
+        if (tier <= 11) {
+            return "⚪";
+        }
+        if (tier <= 14) {
+            return "🟡";
+        }
+        if (tier <= 17) {
+            return "🔵";
+        }
+        if (tier <= 20) {
+            return "💎";
+        }
+        if (tier <= 23) {
+            return "🟢";
+        }
+        if (tier <= 26) {
+            return "🔴";
+        }
         return "🏆";
     }
 }
