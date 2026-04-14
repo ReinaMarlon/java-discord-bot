@@ -99,7 +99,9 @@ public class ValorantPlayerCommand implements Command {
                     for (JsonNode match : matches) {
 
                         String mode = match.get("metadata").get("mode_id").asText();
-                        if (!mode.equals("competitive")) continue;
+                        if (!mode.equals("competitive")) {
+                            continue;
+                        }
 
                         final int roundsPlayed = match.get("metadata").get("rounds_played").asInt(1);
                         final JsonNode players = match.get("players").get("all_players");
@@ -112,7 +114,9 @@ public class ValorantPlayerCommand implements Command {
                                 break;
                             }
                         }
-                        if (mainPlayer == null) continue;
+                        if (mainPlayer == null) {
+                            continue;
+                        }
 
                         totalGames++;
 
@@ -143,8 +147,11 @@ public class ValorantPlayerCommand implements Command {
                         boolean won = (playerTeam.equalsIgnoreCase("Red") && redWon)
                                 || (playerTeam.equalsIgnoreCase("Blue") && !redWon);
 
-                        if (won) wins++;
-                        else losses++;
+                        if (won) {
+                            wins++;
+                        } else {
+                            losses++;
+                        }
 
                         JsonNode rounds = match.get("rounds");
                         if (rounds != null) {
@@ -162,7 +169,9 @@ public class ValorantPlayerCommand implements Command {
 
                                     int roundKills = ps.get("kills").asInt(0);
 
-                                    if (roundKills >= 5) aces++;
+                                    if (roundKills >= 5) {
+                                        aces++;
+                                    }
 
                                     if (roundKills >= 1) {
                                         JsonNode killEvents = ps.get("kill_events");
