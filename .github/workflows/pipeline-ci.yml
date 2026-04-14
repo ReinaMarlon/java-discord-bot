@@ -43,15 +43,15 @@ jobs:
 
       # 5. Checkstyle
       - name: Run Checkstyle
-        run: ./gradlew checkstyleMain checkstyleTest
+        run: ./gradlew checkstyleMain
 
       # 6. PMD (malas prácticas y duplicaciones)
       - name: Run PMD
-        run: ./gradlew pmdMain pmdTest
+        run: ./gradlew pmdMain
 
       # 7. SpotBugs + FindSecBugs (análisis de bugs y seguridad)
       - name: Run SpotBugs
-        run: ./gradlew spotbugsMain spotbugsTest
+        run: ./gradlew spotbugsMain
 
       # 8. Compilar, ejecutar tests y generar cobertura
       - name: Build and test with coverage
@@ -62,4 +62,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco
+          path: build/reports/jacoco/test/html

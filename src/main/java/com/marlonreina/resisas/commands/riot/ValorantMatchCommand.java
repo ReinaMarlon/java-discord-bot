@@ -7,7 +7,7 @@ import com.marlonreina.resisas.service.RiotService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class ValorantMatchCommand implements Command {
 
@@ -156,26 +156,44 @@ public class ValorantMatchCommand implements Command {
             embed.setColor(embedColor);
             embed.setThumbnail(agentIconUrl);
 
-            embed.setTitle(resultado + "  |  " + map + "  ·  " + mode);
+            embed.setTitle(resultado
+                    + "  |  "
+                    + map
+                    + "  ·  "
+                    + mode);
             embed.setDescription(
-                    "🕐 " + startTime + "\n" +
-                            "🗺️ Rondas jugadas: **" + roundsPlayed + "**\n" +
-                            scoreLine
+                    "🕐 "
+                            + startTime
+                            + "\n"
+                            + "🗺️ Rondas jugadas: **"
+                            + roundsPlayed
+                            + "**\n"
+                            + scoreLine
             );
 
             // Jugador principal
             embed.addField(
-                    "👤 " + name + "#" + tag + "  —  " + agent + "  " + rankEmoji + " " + rank,
+                    "👤 "
+                            + name
+                            + "#"
+                            + tag
+                            + "  —  "
+                            + agent
+                            + "  "
+                            + rankEmoji
+                            + " "
+                            + rank,
                     String.format(
-                            "```\n" +
-                                    "K / D / A     %d / %d / %d\n" +
-                                    "KDA Ratio     %.2f\n" +
-                                    "ACS           %d\n" +
-                                    "Score         %d\n" +
-                                    "HS%%           %.1f%%\n" +
-                                    "Daño hecho    %d\n" +
-                                    "Daño recibido %d\n" +
-                                    "```",
+                            "```\n"
+                                    + "K / D / A     %d / %d / %d\n"
+                                    + "KDA Ratio     %.2f\n"
+                                    + "ACS           %d\n"
+                                    + "Score         %d\n"
+
+                                    + "HS%%           %.1f%%\n"
+                                    + "Daño hecho    %d\n"
+                                    + "Daño recibido %d\n"
+                                    + "```",
                             kills, deaths, assists, kda, acs, score, hsPercent, dmgMade, dmgReceived
                     ),
                     false

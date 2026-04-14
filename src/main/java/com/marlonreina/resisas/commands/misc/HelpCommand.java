@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class HelpCommand implements Command {
 
@@ -48,13 +48,16 @@ public class HelpCommand implements Command {
         embed.setTitle("📖  Centro de Ayuda");
         embed.setThumbnail(event.getJDA().getSelfUser().getEffectiveAvatarUrl());
         embed.setDescription(
-                "Selecciona un comando del menú para ver sus detalles.\n" +
-                        "Prefijo actual: **`" + prefix + "`**\n\u200B"
+                "Selecciona un comando del menú para ver sus detalles.\n"
+                        + "Prefijo actual: **`"
+                        + prefix
+                        + "`**\n\u200B"
         );
         embed.addField("⚙️  General", "`ping` · `prefix` · `help`", false);
         embed.addField("🛡️  Moderación", "`clear` · `kick` · `ban`", false);
         embed.addField("🎮  Valorant", "`consultar` · `vrank` · `vmatch`", false);
-        embed.setFooter("Resisas Bot  •  " + event.getGuild().getName());
+        embed.setFooter("Resisas Bot  •  "
+                + event.getGuild().getName());
         return embed;
     }
 

@@ -20,12 +20,18 @@ public class MessageListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        if (event.getAuthor().isBot()) return;
-        if (!event.isFromGuild()) return;
+        if (event.getAuthor().isBot()) {
+            return;
+        }
+        if (!event.isFromGuild()) {
+            return;
+        }
 
         String detectedPrefix = prefixResolver.resolvePrefix(event);
 
-        if (detectedPrefix == null) return;
+        if (detectedPrefix == null) {
+            return;
+        }
 
         commandHandler.handle(event, detectedPrefix);
     }

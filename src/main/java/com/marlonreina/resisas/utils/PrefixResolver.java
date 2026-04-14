@@ -30,8 +30,12 @@ public class PrefixResolver {
         String botId = event.getJDA().getSelfUser().getId();
 
         // ── Mención directa: @Bot comando ─────────────────────────────
-        String mentionPrefix = "<@" + botId + ">";
-        String mentionPrefix2 = "<@!" + botId + ">"; // legacy mention format
+        String mentionPrefix = "<@"
+                + botId
+                + ">";
+        String mentionPrefix2 = "<@!"
+                + botId
+                + ">"; // legacy mention format
 
         if (content.startsWith(mentionPrefix)) {
             return mentionPrefix;

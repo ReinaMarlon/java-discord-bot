@@ -9,7 +9,7 @@ import com.marlonreina.resisas.service.RiotService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,7 +36,11 @@ public class ValorantLeaderboardCommand implements Command {
             return;
         }
 
-        event.getChannel().sendMessage("⏳ Consultando " + accounts.size() + " cuenta(s), espera un momento...").queue(loadingMsg -> {
+        event.getChannel().sendMessage("⏳ Consultando "
+
+                + accounts.size()
+
+                + " cuenta(s), espera un momento...").queue(loadingMsg -> {
             try {
 
                 List<PlayerEntry> entries = new java.util.concurrent.CopyOnWriteArrayList<>();
@@ -53,7 +57,9 @@ public class ValorantLeaderboardCommand implements Command {
                             PlayerEntry entry = buildEntry(acc);
                             if (entry != null) entries.add(entry);
                         } catch (Exception e) {
-                            System.err.println("Error consultando " + acc.getRiotName() + ": " + e.getMessage());
+                            System.err.println("Error consultando "
+                                    + acc.getRiotName()
+                                    + ": " + e.getMessage());
                         }
                     }));
                 }
@@ -84,7 +90,8 @@ public class ValorantLeaderboardCommand implements Command {
 
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setColor(new Color(0xFF4655));
-                embed.setTitle("🏆  Leaderboard Valorant  —  " + event.getGuild().getName());
+                embed.setTitle("🏆  Leaderboard Valorant  —  "
+                        + event.getGuild().getName());
                 embed.setThumbnail(event.getJDA().getSelfUser().getEffectiveAvatarUrl());
 
                 StringBuilder board = new StringBuilder();
@@ -92,9 +99,13 @@ public class ValorantLeaderboardCommand implements Command {
 
                 for (int i = 0; i < entries.size(); i++) {
                     PlayerEntry e = entries.get(i);
-                    String pos = i < 3 ? medals[i] : "`#" + (i + 1) + "`";
+                    String pos = i < 3 ? medals[i] : "`#"
+                            + (i + 1)
+                            + "`";
                     String rankEmoji = getTierEmoji(e.tier);
-                    String mmrStr = e.mmrChange >= 0 ? "▲+" + e.mmrChange : "▼" + e.mmrChange;
+                    String mmrStr = e.mmrChange >= 0 ? "▲+"
+                            + e.mmrChange : "▼"
+                            + e.mmrChange;
 
                     board.append(String.format("%s  %s %s **%s**  ·  `%d RR`  %s\n", pos, rankEmoji, e.rankPatched, e.riotId, e.rr, mmrStr));
                 }
@@ -103,10 +114,18 @@ public class ValorantLeaderboardCommand implements Command {
 
                 for (int i = 0; i < entries.size(); i++) {
                     PlayerEntry e = entries.get(i);
-                    String pos = i < 3 ? medals[i] : "#" + (i + 1);
+                    String pos = i < 3 ? medals[i] : "#"
+                            + (i + 1);
                     String emoji = getTierEmoji(e.tier);
 
-                    embed.addField(pos + "  " + emoji + "  " + e.riotId, String.format("```\n" + "ELO        %d\n" + "Peak       %s (%d ELO)\n" + "Win Rate   %.1f%%  (%d partidas)\n" + "KDA        %.2f\n" + "ACS        %.0f\n" + "```", e.elo, e.peakRank, e.peakElo, e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs), true);
+                    embed.addField(pos
+                            + "  " + emoji
+                            + "  " + e.riotId, String.format("```\n"
+
+                            + "ELO        %d\n" + "Peak       %s (%d ELO)\n" + "Win Rate   %.1f%%  (%d partidas)\n"
+                            + "KDA        %.2f\n"
+                            + "ACS        %.0f\n"
+                            + "```", e.elo, e.peakRank, e.peakElo, e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs), true);
                 }
 
                 embed.setFooter("Ordenado por ELO  •  Última actualización ahora");
@@ -129,7 +148,9 @@ public class ValorantLeaderboardCommand implements Command {
         JsonNode mmrRoot = mapper.readTree(mmrJson);
         JsonNode mmrData = mmrRoot.get("data");
 
-        if (mmrData == null || !mmrData.isArray() || mmrData.size() == 0) return null;
+        if (mmrData == null || !mmrData.isArray() || mmrData.size() == 0) {
+            return null;
+        }
 
         JsonNode latest = mmrData.get(0);
 
@@ -174,7 +195,9 @@ public class ValorantLeaderboardCommand implements Command {
                         break;
                     }
                 }
-                if (mainPlayer == null) continue;
+                if (mainPlayer == null) {
+                    continue;
+                }
 
                 totalGames++;
                 JsonNode stats = mainPlayer.get("stats");
@@ -197,22 +220,41 @@ public class ValorantLeaderboardCommand implements Command {
 
         entry.gamesPlayed = totalGames;
         entry.winRate = totalGames > 0 ? (wins * 100.0 / totalGames) : 0;
-        entry.avgKda = totalDeaths > 0 ? (totalKills + totalAssists) / (double) totalDeaths : totalKills + totalAssists;
+        entry.avgKda = totalDeaths > 0 ? (totalKills
+                + totalAssists) / (double) totalDeaths : totalKills + totalAssists;
         entry.avgAcs = totalGames > 0 ? (double) totalAcs / totalGames : 0;
 
         return entry;
     }
 
     private String getTierEmoji(int tier) {
-        if (tier == 0) return "❓";
-        if (tier <= 5) return "🔘";
-        if (tier <= 8) return "🟤";
-        if (tier <= 11) return "⚪";
-        if (tier <= 14) return "🟡";
-        if (tier <= 17) return "🔵";
-        if (tier <= 20) return "️💎️";
-        if (tier <= 23) return "🟢";
-        if (tier <= 26) return "🔴";
+        if (tier == 0) {
+            return "❓";
+        }
+        if (tier <= 5) {
+            return "🔘";
+        }
+        if (tier <= 8) {
+            return "🟤";
+        }
+        if (tier <= 11) {
+            return "⚪";
+        }
+        if (tier <= 14) {
+            return "🟡";
+        }
+        if (tier <= 17) {
+            return "🔵";
+        }
+        if (tier <= 20) {
+            return "️💎️";
+        }
+        if (tier <= 23) {
+            return "🟢";
+        }
+        if (tier <= 26) {
+            return "🔴";
+        }
         return "🏆";
     }
 

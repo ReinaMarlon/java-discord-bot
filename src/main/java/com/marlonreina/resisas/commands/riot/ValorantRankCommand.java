@@ -7,7 +7,7 @@ import com.marlonreina.resisas.service.RiotService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class ValorantRankCommand implements Command {
 
