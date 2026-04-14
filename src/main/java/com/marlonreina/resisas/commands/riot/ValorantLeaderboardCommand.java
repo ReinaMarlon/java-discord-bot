@@ -37,32 +37,39 @@ public class ValorantLeaderboardCommand implements Command {
 
         String guildId = event.getGuild().getId();
         List<LeaderboardAccount> accounts = leaderboardService.getAccounts(guildId);
+
         if (accounts.isEmpty()) {
-            event.getChannel().sendMessage("❌ No hay cuentas registradas. "
-                    + "Usa `!vregisteraccount nombre#tag` para agregar una.").queue();
+            event.getChannel().sendMessage(
+                    "❌ No hay cuentas registradas. Usa `!vregisteraccount nombre#tag` para agregar una."
+            ).queue();
             return;
         }
-        event.getChannel().sendMessage("⏳ Consultando "
-                + accounts.size()
-                + " cuenta(s), espera un momento...").queue(loadingMsg -> {
+
+        event.getChannel().sendMessage(
+                "⏳ Consultando " + accounts.size() + " cuenta(s), espera un momento..."
+        ).queue(loadingMsg -> {
+
             try {
                 List<PlayerEntry> entries = new CopyOnWriteArrayList<>();
+
                 ExecutorService executor =
                         Executors.newFixedThreadPool(Math.min(accounts.size(), 10));
+
                 List<Future<?>> futures = new ArrayList<>();
 
                 for (LeaderboardAccount acc : accounts) {
                     futures.add(executor.submit(() -> {
                         try {
                             Thread.sleep((long) (Math.random() * 1000));
+
                             PlayerEntry entry = buildEntry(acc);
                             if (entry != null) {
                                 entries.add(entry);
                             }
+
                         } catch (Exception e) {
                             System.err.println("Error consultando "
-                                    + acc.getRiotName()
-                                    + ": " + e.getMessage());
+                                    + acc.getRiotName() + ": " + e.getMessage());
                         }
                     }));
                 }
@@ -70,67 +77,81 @@ public class ValorantLeaderboardCommand implements Command {
                 for (Future<?> f : futures) {
                     try {
                         f.get(60, TimeUnit.SECONDS);
+
                     } catch (ExecutionException e) {
                         System.err.println("Error en hilo: " + e.getCause());
                         e.getCause().printStackTrace();
+
                     } catch (TimeoutException e) {
                         System.err.println("Timeout esperando respuesta de la API");
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+
                 executor.shutdown();
 
                 if (entries.isEmpty()) {
-                    loadingMsg.editMessage("❌ No se pudo obtener información de ninguna cuenta.").queue();
+                    loadingMsg.editMessage(
+                            "❌ No se pudo obtener información de ninguna cuenta."
+                    ).queue();
                     return;
                 }
+
                 entries.sort(Comparator.comparingInt((PlayerEntry e) -> e.elo).reversed());
+
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setColor(new Color(0xFF4655));
-                embed.setTitle("🏆  Leaderboard Valorant  —  "
-                        + event.getGuild().getName());
+                embed.setTitle("🏆 Leaderboard Valorant — " + event.getGuild().getName());
                 embed.setThumbnail(event.getJDA().getSelfUser().getEffectiveAvatarUrl());
+
                 StringBuilder board = new StringBuilder();
                 final String[] medals = {"🥇", "🥈", "🥉"};
 
                 for (int i = 0; i < entries.size(); i++) {
                     PlayerEntry e = entries.get(i);
-                    String pos = i < 3 ? medals[i] : "`#"
-                            + (i + 1)
-                            + "`";
+
+                    String pos = i < 3 ? medals[i] : "`#" + (i + 1) + "`";
                     String rankEmoji = getTierEmoji(e.tier);
-                    String mmrStr = e.mmrChange >= 0 ? "▲+"
-                            + e.mmrChange : "▼"
-                            + e.mmrChange;
+                    String mmrStr = e.mmrChange >= 0 ? "▲+" + e.mmrChange : "▼" + e.mmrChange;
+
                     board.append(String.format(
-                            "%s  %s %s **%s**  ·  `%d RR`  %s\n",
-                            pos, rankEmoji, e.rankPatched, e.riotId, e.rr, mmrStr));
+                            "%s %s %s **%s** · `%d RR` %s\n",
+                            pos, rankEmoji, e.rankPatched, e.riotId, e.rr, mmrStr
+                    ));
                 }
+
                 embed.setDescription(board.toString());
 
                 for (int i = 0; i < entries.size(); i++) {
                     PlayerEntry e = entries.get(i);
-                    String pos = i < 3 ? medals[i] : "#"
-                            + (i + 1);
+
+                    String pos = i < 3 ? medals[i] : "#" + (i + 1);
                     String emoji = getTierEmoji(e.tier);
-                    embed.addField(pos
-                                    + "  " + emoji
-                                    + "  " + e.riotId,
-                            String.format("```\n"
+
+                    embed.addField(
+                            pos + " " + emoji + " " + e.riotId,
+                            String.format(
+                                    "```\n"
                                             + "ELO        %d\n"
                                             + "Peak       %s (%d ELO)\n"
-                                            + "Win Rate   %.1f%%  (%d partidas)\n"
+                                            + "Win Rate   %.1f%% (%d partidas)\n"
                                             + "KDA        %.2f\n"
                                             + "ACS        %.0f\n"
                                             + "```",
                                     e.elo, e.peakRank, e.peakElo,
-                                    e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs),
-                            true);
+                                    e.winRate, e.gamesPlayed, e.avgKda, e.avgAcs
+                            ),
+                            true
+                    );
                 }
-                embed.setFooter("Ordenado por ELO  •  Última actualización ahora");
+
+                embed.setFooter("Ordenado por ELO • Última actualización ahora");
+
                 loadingMsg.delete().queue();
                 event.getChannel().sendMessageEmbeds(embed.build()).queue();
+
             } catch (Exception e) {
                 loadingMsg.editMessage("❌ Error generando el leaderboard.").queue();
                 e.printStackTrace();
