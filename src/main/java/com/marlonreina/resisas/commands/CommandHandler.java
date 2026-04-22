@@ -3,6 +3,7 @@ package com.marlonreina.resisas.commands;
 import com.marlonreina.resisas.commands.administrator.BanCommand;
 import com.marlonreina.resisas.commands.administrator.ClearCommand;
 import com.marlonreina.resisas.commands.administrator.KickCommand;
+import com.marlonreina.resisas.commands.administrator.LogCommand;
 import com.marlonreina.resisas.commands.administrator.PrefixCommand;
 import com.marlonreina.resisas.commands.misc.HelpCommand;
 import com.marlonreina.resisas.commands.riot.ValorantLeaderboardCommand;
@@ -13,6 +14,7 @@ import com.marlonreina.resisas.commands.riot.ValorantRegisterCommand;
 import com.marlonreina.resisas.commands.test.PingCommand;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.service.LeaderboardService;
+import com.marlonreina.resisas.service.LogService;
 import com.marlonreina.resisas.service.RiotService;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
@@ -28,14 +30,16 @@ public class CommandHandler {
     private final RiotService riotService;
     private final LeaderboardService leaderboardService;
     private final GuildService guildService;
+    private final LogService logService;
 
     public CommandHandler(RiotService riotService,
                           LeaderboardService leaderboardService,
-                          GuildService guildService) {
+                          GuildService guildService, LogService logService) {
 
         this.riotService = riotService;
         this.leaderboardService = leaderboardService;
         this.guildService = guildService;
+        this.logService = logService;
 
         registerCommands();
     }
@@ -57,6 +61,8 @@ public class CommandHandler {
         commands.put("vleaderboard", new ValorantLeaderboardCommand(leaderboardService, riotService));
 
         commands.put("help", new HelpCommand(guildService));
+
+        commands.put("setlog", new LogCommand(logService));
     }
 
     public void handle(MessageReceivedEvent event, String prefix) {
