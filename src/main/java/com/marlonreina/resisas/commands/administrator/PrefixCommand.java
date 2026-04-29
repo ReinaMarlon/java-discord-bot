@@ -1,10 +1,10 @@
 package com.marlonreina.resisas.commands.administrator;
 
 import com.marlonreina.resisas.commands.Command;
+import com.marlonreina.resisas.commands.CommandContext;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.Color;
 import java.util.Objects;
@@ -18,38 +18,35 @@ public class PrefixCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
+    public void execute(CommandContext context) {
+        var event = context.getEvent();
 
         if (!Objects.requireNonNull(event.getMember()).hasPermission(Permission.ADMINISTRATOR)) {
             event.getChannel().sendMessageEmbeds(
-                    EmbedUtil.error("No tienes permisos para ejecutar este comando.").build()
+                    EmbedUtil.error("No tienes permisos para cambiar el prefijo.").build()
             ).queue();
             return;
         }
 
-        var currentPrefix = guildService
-                .getOrCreate(event.getGuild().getId())
-                .getPrefix();
-
-        if (args.length < 1) {
+        if (context.getArgs().length < 1) {
             event.getChannel().sendMessageEmbeds(
                     EmbedUtil.simplyBuildMessage(
-                            "Prefijo actual " + currentPrefix,
-                            "Uso: " + currentPrefix + "prefix !",
+                            "Prefijo actual",
+                            "Prefijo: `" + context.getPrefix() + "`\nUso: `"
+                                    + context.usage("prefix <nuevo>") + "`",
                             Color.CYAN
                     ).build()
             ).queue();
             return;
         }
 
-        String newPrefix = args[0];
-        String guildId = event.getGuild().getId();
-
-        guildService.changePrefix(guildId, newPrefix);
+        String newPrefix = context.getArgs()[0];
+        guildService.changePrefix(event.getGuild().getId(), newPrefix);
 
         event.getChannel().sendMessageEmbeds(
-                EmbedUtil.success("Prefijo actualizado a: "
-                        + newPrefix).build()
+                EmbedUtil.success("Prefijo actualizado")
+                        .setDescription("Nuevo prefijo: `" + newPrefix + "`")
+                        .build()
         ).queue();
     }
 }

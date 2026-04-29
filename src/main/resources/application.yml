@@ -15,6 +15,10 @@ logging:
 server:
   port: ${PORT:8080}
 
+resisas:
+  web:
+    welcome-config-url: ${WELCOME_CONFIG_URL:https://resisasbot.com/welcome}
+
 ---
 
 spring:

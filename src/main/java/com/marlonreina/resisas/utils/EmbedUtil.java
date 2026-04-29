@@ -6,11 +6,14 @@ import java.awt.Color;
 
 public class EmbedUtil {
 
+    public static final int HEXA_COLOR = 0x5865F2;
+    public static final String FOOTER = "Hexa";
+
     public static EmbedBuilder success(String title) {
         return new EmbedBuilder()
                 .setTitle(title)
                 .setColor(Color.GREEN)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setFooter(FOOTER);
     }
 
     public static EmbedBuilder error(String desc) {
@@ -18,14 +21,14 @@ public class EmbedUtil {
                 .setTitle("Error")
                 .setDescription(desc)
                 .setColor(Color.RED)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setFooter(FOOTER);
     }
 
     public static EmbedBuilder info(String title) {
         return new EmbedBuilder()
                 .setTitle(title)
-                .setColor(Color.BLUE)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setColor(new Color(HEXA_COLOR))
+                .setFooter(FOOTER);
     }
 
     public static EmbedBuilder simplyBuildMessage(String title, String desc, Color color) {
@@ -33,6 +36,16 @@ public class EmbedUtil {
                 .setTitle(title)
                 .setDescription(desc)
                 .setColor(color)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setFooter(FOOTER);
+    }
+
+    public static EmbedBuilder usage(String usage) {
+        return info("Uso del comando")
+                .setDescription("`" + usage + "`");
+    }
+
+    public static EmbedBuilder loading(String message) {
+        return info("Procesando")
+                .setDescription(message);
     }
 }
