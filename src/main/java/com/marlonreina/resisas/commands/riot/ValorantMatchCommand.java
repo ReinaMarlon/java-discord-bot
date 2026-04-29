@@ -3,7 +3,9 @@ package com.marlonreina.resisas.commands.riot;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marlonreina.resisas.commands.Command;
+import com.marlonreina.resisas.commands.CommandContext;
 import com.marlonreina.resisas.service.RiotService;
+import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -31,10 +33,14 @@ public class ValorantMatchCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
+    public void execute(CommandContext context) {
+        MessageReceivedEvent event = context.getEvent();
+        String[] args = context.getArgs();
 
         if (args.length < 1) {
-            event.getChannel().sendMessage("Uso: `!vmatch nombre#tag`").queue();
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.usage(context.usage("vmatch nombre#tag")).build()
+            ).queue();
             return;
         }
 
@@ -43,7 +49,9 @@ public class ValorantMatchCommand implements Command {
             String[] riotId = fullInput.split("#");
 
             if (riotId.length < 2) {
-                event.getChannel().sendMessage("Formato correcto: `nombre#tag`").queue();
+                event.getChannel().sendMessageEmbeds(
+                        EmbedUtil.error("Formato correcto: `nombre#tag`.").build()
+                ).queue();
                 return;
             }
 
@@ -83,7 +91,9 @@ public class ValorantMatchCommand implements Command {
             }
 
             if (mainPlayer == null) {
-                event.getChannel().sendMessage("❌ No se encontró al jugador en la partida.").queue();
+                event.getChannel().sendMessageEmbeds(
+                        EmbedUtil.error("No se encontro al jugador en la partida.").build()
+                ).queue();
                 return;
             }
 
@@ -197,12 +207,14 @@ public class ValorantMatchCommand implements Command {
             embed.addField("🔴 Team Red", redBuilder.toString(), false);
             embed.addField("🔵 Team Blue", blueBuilder.toString(), false);
 
-            embed.setFooter("Valorant Match · " + map);
+            embed.setFooter("Hexa Valorant Match - " + map);
 
             event.getChannel().sendMessageEmbeds(embed.build()).queue();
 
         } catch (Exception e) {
-            event.getChannel().sendMessage("❌ Error obteniendo la partida.").queue();
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.error("Error obteniendo la partida.").build()
+            ).queue();
             e.printStackTrace();
         }
     }

@@ -1,7 +1,9 @@
 package com.marlonreina.resisas.listener;
 
 import com.marlonreina.resisas.service.GuildService;
+import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -20,32 +22,27 @@ public class HelpInteractionListener extends ListenerAdapter {
         this.guildService = guildService;
     }
 
-    // ── SelectMenu: usuario eligió un comando ──────────────────────────
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         if (!event.getComponentId().equals("help:select")) {
             return;
         }
 
-        String selected = event.getValues().get(0); // ej: "help:cmd:vmatch"
+        String selected = event.getValues().get(0);
         if (!selected.startsWith("help:cmd:")) {
             return;
         }
 
-        String cmd = selected.replace("help:cmd:", "");
+        String command = selected.replace("help:cmd:", "");
         String prefix = guildService.getOrCreate(event.getGuild().getId()).getPrefix();
-
-        EmbedBuilder embed = buildCommandEmbed(cmd, prefix, event.getGuild().getName(),
+        EmbedBuilder embed = buildCommandEmbed(command, prefix, event.getGuild().getName(),
                 event.getJDA().getSelfUser().getEffectiveAvatarUrl());
 
-        Button backButton = Button.secondary("help:back", "← Volver al menú");
-
         event.editMessageEmbeds(embed.build())
-                .setActionRow(backButton)
+                .setActionRow(Button.secondary("help:back", "Volver al menu"))
                 .queue();
     }
 
-    // ── Button: usuario presionó "← Volver" ───────────────────────────
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (!event.getComponentId().equals("help:back")) {
@@ -53,177 +50,120 @@ public class HelpInteractionListener extends ListenerAdapter {
         }
 
         String prefix = guildService.getOrCreate(event.getGuild().getId()).getPrefix();
-        String guildName = event.getGuild().getName();
-        String botAvatar = event.getJDA().getSelfUser().getEffectiveAvatarUrl();
-
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(new Color(0x5865F2));
-        embed.setTitle("📖  Centro de Ayuda");
-        embed.setThumbnail(botAvatar);
-        embed.setDescription(
-                "Selecciona un comando del menú para ver sus detalles.\n"
-                        + "Prefijo actual: **`"
-                        + prefix
-                        + "`**\n\u200B"
-        );
-        embed.addField("⚙️  General", "`ping` · `prefix` · `help`", false);
-        embed.addField("🛡️  Moderación", "`clear` · `kick` · `ban`", false);
-        embed.addField("🎮  Valorant", "`consultar` · `vrank` · `vmatch`", false);
-        embed.setFooter("Resisas Bot  •  "
-                + guildName);
-
-        StringSelectMenu menu = StringSelectMenu.create("help:select")
-                .setPlaceholder("📋 Selecciona un comando...")
-                .addOption("ping", "help:cmd:ping", "Comprueba la latencia del bot",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
-                .addOption("prefix", "help:cmd:prefix", "Cambia el prefijo del servidor",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
-                .addOption("help", "help:cmd:help", "Muestra esta ayuda",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("⚙️"))
-                .addOption("clear", "help:cmd:clear", "Elimina mensajes del canal",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
-                .addOption("kick", "help:cmd:kick", "Expulsa a un miembro",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
-                .addOption("ban", "help:cmd:ban", "Banea a un miembro",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🛡️"))
-                .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
-                .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
-                .addOption("vmatch", "help:cmd:vmatch", "Última partida de un jugador",
-                        net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode("🎮"))
-                .build();
-
-        event.editMessageEmbeds(embed.build())
-                .setActionRow(menu)
+        event.editMessageEmbeds(buildMainEmbed(prefix, event.getGuild().getName(),
+                        event.getJDA().getSelfUser().getEffectiveAvatarUrl()).build())
+                .setActionRow(buildMenu())
                 .queue();
     }
 
-    // ── Builder de embed por comando ───────────────────────────────────
-    private EmbedBuilder buildCommandEmbed(String cmd, String prefix,
+    private EmbedBuilder buildMainEmbed(String prefix, String guildName, String botAvatar) {
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setColor(new Color(EmbedUtil.HEXA_COLOR));
+        embed.setTitle("Centro de Ayuda");
+        embed.setThumbnail(botAvatar);
+        embed.setDescription("Selecciona un comando del menu para ver sus detalles.\n"
+                + "Prefijo actual: **`" + prefix + "`**\n\u200B");
+        embed.addField("General", "`ping` · `prefix` · `help` · `welcome`", false);
+        embed.addField("Moderacion", "`clear` · `kick` · `ban`", false);
+        embed.addField("Valorant", "`consultar` · `vplayer` · `vrank` · `vmatch` · "
+                + "`vregisteraccount` · `vleaderboard`", false);
+        embed.setFooter("Hexa - " + guildName);
+        return embed;
+    }
+
+    private StringSelectMenu buildMenu() {
+        return StringSelectMenu.create("help:select")
+                .setPlaceholder("Selecciona un comando...")
+                .addOption("ping", "help:cmd:ping", "Comprueba la latencia del bot",
+                        Emoji.fromUnicode("⚙️"))
+                .addOption("prefix", "help:cmd:prefix", "Cambia el prefijo del servidor",
+                        Emoji.fromUnicode("⚙️"))
+                .addOption("help", "help:cmd:help", "Muestra esta ayuda",
+                        Emoji.fromUnicode("⚙️"))
+                .addOption("welcome", "help:cmd:welcome", "Configura mensajes de bienvenida",
+                        Emoji.fromUnicode("⚙️"))
+                .addOption("clear", "help:cmd:clear", "Elimina mensajes del canal",
+                        Emoji.fromUnicode("🛡️"))
+                .addOption("kick", "help:cmd:kick", "Expulsa a un miembro",
+                        Emoji.fromUnicode("🛡️"))
+                .addOption("ban", "help:cmd:ban", "Banea a un miembro",
+                        Emoji.fromUnicode("🛡️"))
+                .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant",
+                        Emoji.fromUnicode("🎮"))
+                .addOption("vplayer", "help:cmd:vplayer", "Perfil avanzado de Valorant",
+                        Emoji.fromUnicode("🎮"))
+                .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador",
+                        Emoji.fromUnicode("🎮"))
+                .addOption("vmatch", "help:cmd:vmatch", "Ultima partida de un jugador",
+                        Emoji.fromUnicode("🎮"))
+                .addOption("vregisteraccount", "help:cmd:vregisteraccount", "Registra tu cuenta",
+                        Emoji.fromUnicode("🎮"))
+                .addOption("vleaderboard", "help:cmd:vleaderboard", "Ranking del servidor",
+                        Emoji.fromUnicode("🎮"))
+                .build();
+    }
+
+    private EmbedBuilder buildCommandEmbed(String command, String prefix,
                                            String guildName, String botAvatar) {
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(new Color(0x5865F2));
+        embed.setColor(new Color(EmbedUtil.HEXA_COLOR));
         embed.setThumbnail(botAvatar);
 
-        switch (cmd) {
-            case "ping" -> {
-                embed.setTitle("⚙️  ping");
-                embed.setDescription("Comprueba si el bot está activo y mide la latencia.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "ping`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "ping`", false);
-                embed.addField("🔒 Permisos", "Ninguno", false);
-            }
-            case "prefix" -> {
-                embed.setTitle("⚙️  prefix");
-                embed.setDescription("Cambia el prefijo del bot en este servidor.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "prefix <nuevo>`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "prefix !`", false);
-                embed.addField("🔒 Permisos", "Administrador", false);
-            }
-            case "help" -> {
-                embed.setTitle("⚙️  help");
-                embed.setDescription("Muestra el centro de ayuda interactivo.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "help`", false);
-                embed.addField("🔒 Permisos", "Ninguno", false);
-            }
-            case "clear" -> {
-                embed.setTitle("🛡️  clear");
-                embed.setDescription("Elimina una cantidad de mensajes del canal.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "clear <cantidad>`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "clear 10`", false);
-                embed.addField("⚠️ Límite", "Máximo 100 mensajes por ejecución.", false);
-                embed.addField("🔒 Permisos", "Gestionar mensajes", false);
-            }
-            case "kick" -> {
-                embed.setTitle("🛡️  kick");
-                embed.setDescription("Expulsa a un miembro del servidor.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "kick <@usuario> [razón]`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "kick @user spam`", false);
-                embed.addField("🔒 Permisos", "Expulsar miembros", false);
-            }
-            case "ban" -> {
-                embed.setTitle("🛡️  ban");
-                embed.setDescription("Banea permanentemente a un miembro.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "ban <@usuario> [razón]`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "ban @user conducta inapropiada`", false);
-                embed.addField("🔒 Permisos", "Banear miembros", false);
-            }
-            case "consultar" -> {
-                embed.setTitle("🎮  consultar");
-                embed.setDescription("Muestra información general de una cuenta de Valorant.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "consultar <nombre#tag>`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "consultar Neon#RS シ`", false);
-                embed.addField("🌎 Región", "Latinoamérica (latam)", false);
-                embed.addField("🔒 Permisos", "Ninguno", false);
-            }
-            case "vrank" -> {
-                embed.setTitle("🎮  vrank");
-                embed.setDescription("Muestra el rango competitivo actual de un jugador.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "vrank <nombre#tag>`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "vrank Neon#RS シ`", false);
-                embed.addField("📊 Info", "Tier, RR actuales y pico histórico.", false);
-                embed.addField("🌎 Región", "Latinoamérica (latam)", false);
-                embed.addField("🔒 Permisos", "Ninguno", false);
-            }
-            case "vmatch" -> {
-                embed.setTitle("🎮  vmatch");
-                embed.setDescription("Resumen detallado de la última partida competitiva.");
-                embed.addField("📌 Uso", "`"
-                        + prefix
-                        + "vmatch <nombre#tag>`", false);
-                embed.addField("📋 Ejemplo", "`"
-                        + prefix
-                        + "vmatch Neon#RS シ`", false);
-                embed.addField("📊 Incluye",
-                        "• Resultado · Mapa · Modo · Hora\n"
-                                + "• K/D/A · KDA ratio · ACS · Score\n"
-                                + "• Headshot % · Daño hecho/recibido\n"
-                                + "• Tabla completa de ambos equipos",
-                        false
-                );
-                embed.addField("🌎 Región", "Latinoamérica (latam)", false);
-                embed.addField("🔒 Permisos", "Ninguno", false);
-            }
+        switch (command) {
+            case "ping" -> commandInfo(embed, "ping", "Comprueba si Hexa esta activo.",
+                    prefix + "ping", prefix + "ping", "Ninguno");
+            case "prefix" -> commandInfo(embed, "prefix", "Cambia el prefijo del bot en este servidor.",
+                    prefix + "prefix <nuevo>", prefix + "prefix !", "Administrador");
+            case "help" -> commandInfo(embed, "help", "Muestra el centro de ayuda interactivo.",
+                    prefix + "help", prefix + "help", "Ninguno");
+            case "welcome" -> welcomeInfo(embed, prefix);
+            case "clear" -> commandInfo(embed, "clear", "Elimina mensajes recientes del canal.",
+                    prefix + "clear <cantidad>", prefix + "clear 10", "Gestionar mensajes");
+            case "kick" -> commandInfo(embed, "kick", "Expulsa a un miembro del servidor.",
+                    prefix + "kick @usuario [razon]", prefix + "kick @usuario spam", "Expulsar miembros");
+            case "ban" -> commandInfo(embed, "ban", "Banea a un miembro del servidor.",
+                    prefix + "ban @usuario [razon]", prefix + "ban @usuario spam", "Banear miembros");
+            case "consultar" -> commandInfo(embed, "consultar", "Muestra informacion general de Valorant.",
+                    prefix + "consultar <nombre#tag>", prefix + "consultar Neon#RS", "Ninguno");
+            case "vplayer" -> commandInfo(embed, "vplayer", "Muestra un perfil avanzado de Valorant.",
+                    prefix + "vplayer <nombre#tag>", prefix + "vplayer Neon#RS", "Ninguno");
+            case "vrank" -> commandInfo(embed, "vrank", "Muestra el rango competitivo actual.",
+                    prefix + "vrank <nombre#tag>", prefix + "vrank Neon#RS", "Ninguno");
+            case "vmatch" -> commandInfo(embed, "vmatch", "Resume la ultima partida competitiva.",
+                    prefix + "vmatch <nombre#tag>", prefix + "vmatch Neon#RS", "Ninguno");
+            case "vregisteraccount" -> commandInfo(embed, "vregisteraccount",
+                    "Registra tu cuenta en el leaderboard del servidor.",
+                    prefix + "vregisteraccount <nombre#tag>", prefix + "vregisteraccount Neon#RS", "Ninguno");
+            case "vleaderboard" -> commandInfo(embed, "vleaderboard",
+                    "Muestra el ranking Valorant del servidor.",
+                    prefix + "vleaderboard", prefix + "vleaderboard", "Ninguno");
             default -> {
                 embed.setColor(new Color(0xE74C3C));
-                embed.setTitle("❌  Comando no encontrado");
-                embed.setDescription("Usa el menú para seleccionar un comando válido.");
+                embed.setTitle("Comando no encontrado");
+                embed.setDescription("Usa el menu para seleccionar un comando valido.");
             }
         }
 
-        embed.setFooter("Resisas Bot  •  "
-                + guildName);
+        embed.setFooter("Hexa - " + guildName);
         return embed;
+    }
+
+    private void commandInfo(EmbedBuilder embed, String name, String description,
+                             String usage, String example, String permissions) {
+        embed.setTitle(name);
+        embed.setDescription(description);
+        embed.addField("Uso", "`" + usage + "`", false);
+        embed.addField("Ejemplo", "`" + example + "`", false);
+        embed.addField("Permisos", permissions, false);
+    }
+
+    private void welcomeInfo(EmbedBuilder embed, String prefix) {
+        embed.setTitle("welcome");
+        embed.setDescription("Configura el canal, estado y tipo de mensaje de bienvenida.");
+        embed.addField("Uso", "`" + prefix + "welcome`", false);
+        embed.addField("Subcomandos", "`" + prefix + "welcome setchannel {id del canal}`\n`"
+                + prefix + "welcome enable {true o false}`\n`"
+                + prefix + "welcome configmessage {simply o complex}`", false);
+        embed.addField("Permisos", "Administrador", false);
     }
 }

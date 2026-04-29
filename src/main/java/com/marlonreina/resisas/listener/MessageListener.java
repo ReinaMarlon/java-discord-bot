@@ -27,12 +27,13 @@ public class MessageListener extends ListenerAdapter {
             return;
         }
 
-        String detectedPrefix = prefixResolver.resolvePrefix(event);
+        String triggerPrefix = prefixResolver.resolvePrefix(event);
 
-        if (detectedPrefix == null) {
+        if (triggerPrefix == null) {
             return;
         }
 
-        commandHandler.handle(event, detectedPrefix);
+        String displayPrefix = prefixResolver.getPrefix(event.getGuild().getId());
+        commandHandler.handle(event, triggerPrefix, displayPrefix);
     }
 }
