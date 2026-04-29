@@ -21,17 +21,18 @@ public class BotCommand {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "command_id")
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "command_name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "description", nullable = false, length = 500)
+    @Column(name = "command_description", nullable = false, length = 500)
     private String description;
 
-    @Column(name = "permissions", nullable = false)
+    @Column(name = "command_permissions", nullable = false)
     private String permissions;
 
-    @Column(name = "premium", nullable = false)
+    @Column(name = "command_premium", nullable = false)
     private Boolean premium;
 }

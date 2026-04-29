@@ -3,7 +3,6 @@ package com.marlonreina.resisas.listener;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -63,10 +62,11 @@ public class HelpInteractionListener extends ListenerAdapter {
         embed.setThumbnail(botAvatar);
         embed.setDescription("Selecciona un comando del menu para ver sus detalles.\n"
                 + "Prefijo actual: **`" + prefix + "`**\n\u200B");
-        embed.addField("General", "`ping` · `prefix` · `help` · `welcome`", false);
-        embed.addField("Moderacion", "`clear` · `kick` · `ban`", false);
-        embed.addField("Valorant", "`consultar` · `vplayer` · `vrank` · `vmatch` · "
-                + "`vregisteraccount` · `vleaderboard`", false);
+        embed.addField("General", "`ping` - `prefix` - `help` - `welcome`", false);
+        embed.addField("Moderacion", "`clear` - `kick` - `ban`", false);
+        embed.addField("Economia", "`economy` - `balance` - `daily` - `pay`", false);
+        embed.addField("Valorant", "`consultar` - `vplayer` - `vrank` - `vmatch` - "
+                + "`vregisteraccount` - `vleaderboard`", false);
         embed.setFooter("Hexa - " + guildName);
         return embed;
     }
@@ -74,32 +74,23 @@ public class HelpInteractionListener extends ListenerAdapter {
     private StringSelectMenu buildMenu() {
         return StringSelectMenu.create("help:select")
                 .setPlaceholder("Selecciona un comando...")
-                .addOption("ping", "help:cmd:ping", "Comprueba la latencia del bot",
-                        Emoji.fromUnicode("⚙️"))
-                .addOption("prefix", "help:cmd:prefix", "Cambia el prefijo del servidor",
-                        Emoji.fromUnicode("⚙️"))
-                .addOption("help", "help:cmd:help", "Muestra esta ayuda",
-                        Emoji.fromUnicode("⚙️"))
-                .addOption("welcome", "help:cmd:welcome", "Configura mensajes de bienvenida",
-                        Emoji.fromUnicode("⚙️"))
-                .addOption("clear", "help:cmd:clear", "Elimina mensajes del canal",
-                        Emoji.fromUnicode("🛡️"))
-                .addOption("kick", "help:cmd:kick", "Expulsa a un miembro",
-                        Emoji.fromUnicode("🛡️"))
-                .addOption("ban", "help:cmd:ban", "Banea a un miembro",
-                        Emoji.fromUnicode("🛡️"))
-                .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant",
-                        Emoji.fromUnicode("🎮"))
-                .addOption("vplayer", "help:cmd:vplayer", "Perfil avanzado de Valorant",
-                        Emoji.fromUnicode("🎮"))
-                .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador",
-                        Emoji.fromUnicode("🎮"))
-                .addOption("vmatch", "help:cmd:vmatch", "Ultima partida de un jugador",
-                        Emoji.fromUnicode("🎮"))
-                .addOption("vregisteraccount", "help:cmd:vregisteraccount", "Registra tu cuenta",
-                        Emoji.fromUnicode("🎮"))
-                .addOption("vleaderboard", "help:cmd:vleaderboard", "Ranking del servidor",
-                        Emoji.fromUnicode("🎮"))
+                .addOption("ping", "help:cmd:ping", "Comprueba la latencia del bot")
+                .addOption("prefix", "help:cmd:prefix", "Cambia el prefijo del servidor")
+                .addOption("help", "help:cmd:help", "Muestra esta ayuda")
+                .addOption("welcome", "help:cmd:welcome", "Configura mensajes de bienvenida")
+                .addOption("clear", "help:cmd:clear", "Elimina mensajes del canal")
+                .addOption("kick", "help:cmd:kick", "Expulsa a un miembro")
+                .addOption("ban", "help:cmd:ban", "Banea a un miembro")
+                .addOption("economy", "help:cmd:economy", "Menu de economia")
+                .addOption("balance", "help:cmd:balance", "Consulta balances")
+                .addOption("daily", "help:cmd:daily", "Recompensa diaria")
+                .addOption("pay", "help:cmd:pay", "Transfiere monedas")
+                .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant")
+                .addOption("vplayer", "help:cmd:vplayer", "Perfil avanzado de Valorant")
+                .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador")
+                .addOption("vmatch", "help:cmd:vmatch", "Ultima partida de un jugador")
+                .addOption("vregisteraccount", "help:cmd:vregisteraccount", "Registra tu cuenta")
+                .addOption("vleaderboard", "help:cmd:vleaderboard", "Ranking del servidor")
                 .build();
     }
 
@@ -123,6 +114,13 @@ public class HelpInteractionListener extends ListenerAdapter {
                     prefix + "kick @usuario [razon]", prefix + "kick @usuario spam", "Expulsar miembros");
             case "ban" -> commandInfo(embed, "ban", "Banea a un miembro del servidor.",
                     prefix + "ban @usuario [razon]", prefix + "ban @usuario spam", "Banear miembros");
+            case "economy" -> economyInfo(embed, prefix);
+            case "balance" -> commandInfo(embed, "balance", "Muestra tu balance o el de otro miembro.",
+                    prefix + "balance [@usuario]", prefix + "balance @usuario", "Ninguno");
+            case "daily" -> commandInfo(embed, "daily", "Reclama tu recompensa diaria.",
+                    prefix + "daily", prefix + "daily", "Ninguno");
+            case "pay" -> commandInfo(embed, "pay", "Transfiere hexacoins a otro miembro.",
+                    prefix + "pay @usuario <cantidad>", prefix + "pay @usuario 100", "Ninguno");
             case "consultar" -> commandInfo(embed, "consultar", "Muestra informacion general de Valorant.",
                     prefix + "consultar <nombre#tag>", prefix + "consultar Neon#RS", "Ninguno");
             case "vplayer" -> commandInfo(embed, "vplayer", "Muestra un perfil avanzado de Valorant.",
@@ -155,6 +153,17 @@ public class HelpInteractionListener extends ListenerAdapter {
         embed.addField("Uso", "`" + usage + "`", false);
         embed.addField("Ejemplo", "`" + example + "`", false);
         embed.addField("Permisos", permissions, false);
+    }
+
+    private void economyInfo(EmbedBuilder embed, String prefix) {
+        embed.setTitle("economy");
+        embed.setDescription("Menu principal del sistema de economia.");
+        embed.addField("Uso", "`" + prefix + "economy`", false);
+        embed.addField("Subcomandos", "`" + prefix + "economy balance [@usuario]`\n`"
+                + prefix + "economy daily`\n`"
+                + prefix + "economy pay @usuario <cantidad>`\n`"
+                + prefix + "economy leaderboard`", false);
+        embed.addField("Permisos", "Ninguno", false);
     }
 
     private void welcomeInfo(EmbedBuilder embed, String prefix) {
