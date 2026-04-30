@@ -5,6 +5,7 @@ import com.marlonreina.resisas.commands.administrator.ClearCommand;
 import com.marlonreina.resisas.commands.administrator.KickCommand;
 import com.marlonreina.resisas.commands.administrator.PrefixCommand;
 import com.marlonreina.resisas.commands.administrator.WelcomeCommand;
+import com.marlonreina.resisas.commands.economy.EconomyCommand;
 import com.marlonreina.resisas.commands.misc.HelpCommand;
 import com.marlonreina.resisas.commands.riot.ValorantLeaderboardCommand;
 import com.marlonreina.resisas.commands.riot.ValorantMatchCommand;
@@ -12,6 +13,7 @@ import com.marlonreina.resisas.commands.riot.ValorantPlayerCommand;
 import com.marlonreina.resisas.commands.riot.ValorantRankCommand;
 import com.marlonreina.resisas.commands.riot.ValorantRegisterCommand;
 import com.marlonreina.resisas.commands.test.PingCommand;
+import com.marlonreina.resisas.service.EconomyService;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.service.LeaderboardService;
 import com.marlonreina.resisas.service.RiotService;
@@ -32,18 +34,21 @@ public class CommandHandler {
     private final LeaderboardService leaderboardService;
     private final GuildService guildService;
     private final WelcomeConfigService welcomeConfigService;
+    private final EconomyService economyService;
     private final String welcomeConfigUrl;
 
     public CommandHandler(RiotService riotService,
                           LeaderboardService leaderboardService,
                           GuildService guildService,
                           WelcomeConfigService welcomeConfigService,
+                          EconomyService economyService,
                           @Value("${resisas.web.welcome-config-url}") String welcomeConfigUrl) {
 
         this.riotService = riotService;
         this.leaderboardService = leaderboardService;
         this.guildService = guildService;
         this.welcomeConfigService = welcomeConfigService;
+        this.economyService = economyService;
         this.welcomeConfigUrl = welcomeConfigUrl;
 
         registerCommands();
@@ -57,6 +62,11 @@ public class CommandHandler {
         commands.put("kick", new KickCommand());
         commands.put("ban", new BanCommand());
         commands.put("welcome", new WelcomeCommand(welcomeConfigService, welcomeConfigUrl));
+        commands.put("economy", new EconomyCommand(economyService, "menu"));
+        commands.put("eco", new EconomyCommand(economyService, "menu"));
+        commands.put("balance", new EconomyCommand(economyService, "balance"));
+        commands.put("daily", new EconomyCommand(economyService, "daily"));
+        commands.put("pay", new EconomyCommand(economyService, "pay"));
 
         commands.put("consultar", new ValorantPlayerCommand(riotService));
         commands.put("vrank", new ValorantRankCommand(riotService));
