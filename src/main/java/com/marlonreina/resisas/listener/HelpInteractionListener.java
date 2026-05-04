@@ -65,6 +65,8 @@ public class HelpInteractionListener extends ListenerAdapter {
         embed.addField("General", "`ping` - `prefix` - `help` - `welcome`", false);
         embed.addField("Moderacion", "`clear` - `kick` - `ban`", false);
         embed.addField("Economia", "`economy` - `balance` - `daily` - `pay`", false);
+        embed.addField("Musica", "`music` - `play` - `pause` - `resume` - `queue` - `skip` - "
+                + "`prev` - `stop` - `now` - `volume`", false);
         embed.addField("Valorant", "`consultar` - `vplayer` - `vrank` - `vmatch` - "
                 + "`vregisteraccount` - `vleaderboard`", false);
         embed.setFooter("Hexa - " + guildName);
@@ -85,6 +87,10 @@ public class HelpInteractionListener extends ListenerAdapter {
                 .addOption("balance", "help:cmd:balance", "Consulta balances")
                 .addOption("daily", "help:cmd:daily", "Recompensa diaria")
                 .addOption("pay", "help:cmd:pay", "Transfiere monedas")
+                .addOption("music", "help:cmd:music", "Menu de musica")
+                .addOption("play", "help:cmd:play", "Reproduce musica")
+                .addOption("queue", "help:cmd:queue", "Cola de musica")
+                .addOption("skip", "help:cmd:skip", "Salta pistas")
                 .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant")
                 .addOption("vplayer", "help:cmd:vplayer", "Perfil avanzado de Valorant")
                 .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador")
@@ -121,6 +127,13 @@ public class HelpInteractionListener extends ListenerAdapter {
                     prefix + "daily", prefix + "daily", "Ninguno");
             case "pay" -> commandInfo(embed, "pay", "Transfiere hexacoins a otro miembro.",
                     prefix + "pay @usuario <cantidad>", prefix + "pay @usuario 100", "Ninguno");
+            case "music" -> musicInfo(embed, prefix);
+            case "play" -> commandInfo(embed, "play", "Reproduce una URL o busqueda en tu canal de voz.",
+                    prefix + "play <url o busqueda>", prefix + "play never gonna give you up", "Ninguno");
+            case "queue" -> commandInfo(embed, "queue", "Muestra la cola de musica.",
+                    prefix + "queue", prefix + "queue", "Ninguno");
+            case "skip" -> commandInfo(embed, "skip", "Salta a la siguiente pista.",
+                    prefix + "skip", prefix + "skip", "Ninguno");
             case "consultar" -> commandInfo(embed, "consultar", "Muestra informacion general de Valorant.",
                     prefix + "consultar <nombre#tag>", prefix + "consultar Neon#RS", "Ninguno");
             case "vplayer" -> commandInfo(embed, "vplayer", "Muestra un perfil avanzado de Valorant.",
@@ -163,6 +176,21 @@ public class HelpInteractionListener extends ListenerAdapter {
                 + prefix + "economy daily`\n`"
                 + prefix + "economy pay @usuario <cantidad>`\n`"
                 + prefix + "economy leaderboard`", false);
+        embed.addField("Permisos", "Ninguno", false);
+    }
+
+    private void musicInfo(EmbedBuilder embed, String prefix) {
+        embed.setTitle("music");
+        embed.setDescription("Menu principal del reproductor de musica.");
+        embed.addField("Uso", "`" + prefix + "music`", false);
+        embed.addField("Subcomandos", "`" + prefix + "music play <url o busqueda>`\n`"
+                + prefix + "music pause`\n`"
+                + prefix + "music resume`\n`"
+                + prefix + "music queue`\n`"
+                + prefix + "music skip`\n`"
+                + prefix + "music prev`\n`"
+                + prefix + "music stop`\n`"
+                + prefix + "music volume <0-100>`", false);
         embed.addField("Permisos", "Ninguno", false);
     }
 

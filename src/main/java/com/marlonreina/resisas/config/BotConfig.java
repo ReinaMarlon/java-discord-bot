@@ -21,10 +21,13 @@ public class BotConfig {
         net.dv8tion.jda.api.JDA jda = JDABuilder.createDefault(token,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_MEMBERS,
+                        GatewayIntent.GUILD_VOICE_STATES,
                         GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(helpListener)
                 .addEventListeners(messageListener)
                 .addEventListeners(welcomeListener)
+                .setAutoReconnect(true)
+                .setEnableShutdownHook(true)
                 .build()
                 .awaitReady();
 
