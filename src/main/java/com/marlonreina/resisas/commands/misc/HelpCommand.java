@@ -32,6 +32,10 @@ public class HelpCommand implements Command {
                 .addOption("balance", "help:cmd:balance", "Consulta balances")
                 .addOption("daily", "help:cmd:daily", "Recompensa diaria")
                 .addOption("pay", "help:cmd:pay", "Transfiere monedas")
+                .addOption("music", "help:cmd:music", "Menu de musica")
+                .addOption("play", "help:cmd:play", "Reproduce musica")
+                .addOption("queue", "help:cmd:queue", "Cola de musica")
+                .addOption("skip", "help:cmd:skip", "Salta pistas")
                 .addOption("consultar", "help:cmd:consultar", "Info de una cuenta Valorant")
                 .addOption("vplayer", "help:cmd:vplayer", "Perfil avanzado de Valorant")
                 .addOption("vrank", "help:cmd:vrank", "Rango competitivo de un jugador")
@@ -52,6 +56,8 @@ public class HelpCommand implements Command {
         embed.addField("General", "`ping` - `prefix` - `help` - `welcome`", false);
         embed.addField("Moderacion", "`clear` - `kick` - `ban`", false);
         embed.addField("Economia", "`economy` - `balance` - `daily` - `pay`", false);
+        embed.addField("Musica", "`music` - `play` - `pause` - `resume` - `queue` - `skip` - "
+                + "`prev` - `stop` - `now` - `volume`", false);
         embed.addField("Valorant", "`consultar` - `vplayer` - `vrank` - `vmatch` - "
                 + "`vregisteraccount` - `vleaderboard`", false);
         embed.setFooter("Hexa - " + event.getGuild().getName());
