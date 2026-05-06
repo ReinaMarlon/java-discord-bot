@@ -19,7 +19,6 @@ version = '1.0'
 
 repositories {
     mavenCentral()
-    maven { url "https://maven.lavalink.dev/releases" }
     maven { url "https://jitpack.io" }
 }
 
@@ -28,8 +27,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'net.dv8tion:JDA:5.0.0'
-    implementation 'dev.arbjerg:lavaplayer:2.2.4'
-    implementation 'dev.lavalink.youtube:v2:1.18.0'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.postgresql:postgresql:42.7.7'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'

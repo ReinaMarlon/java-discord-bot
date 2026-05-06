@@ -24,4 +24,7 @@ public class GuildConfig {
     @Column(name = "prefix")
     private String prefix;
 
+    @Column(name = "premium", nullable = false)
+    private Boolean premium;
+
 }
