@@ -17,7 +17,7 @@ public class GuildService {
     public GuildConfig getOrCreate(String guildId) {
         return repo.findById(guildId)
                 .orElseGet(() -> {
-                    GuildConfig config = new GuildConfig(guildId, "-");
+                    GuildConfig config = new GuildConfig(guildId, "-", false);
                     return repo.save(config);
                 });
     }
@@ -25,5 +25,11 @@ public class GuildService {
     @Transactional
     public void changePrefix(String guildId, String newPrefix) {
         repo.updatePrefix(guildId, newPrefix);
+    }
+
+    public boolean isPremium(String guildId) {
+        return repo.findById(guildId)
+                .map(GuildConfig::getPremium)
+                .orElse(false);
     }
 }

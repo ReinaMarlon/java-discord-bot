@@ -31,7 +31,6 @@ public class BotCommandService {
 
         command.setDescription(metadata.description());
         command.setPermissions(metadata.permissions());
-        command.setPremium(metadata.premium());
         repo.save(command);
     }
 }

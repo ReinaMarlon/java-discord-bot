@@ -2,22 +2,22 @@ package com.marlonreina.resisas.commands;
 
 import com.marlonreina.resisas.commands.administrator.BanCommand;
 import com.marlonreina.resisas.commands.administrator.ClearCommand;
+import com.marlonreina.resisas.commands.administrator.CommandPremiumCommand;
 import com.marlonreina.resisas.commands.administrator.KickCommand;
 import com.marlonreina.resisas.commands.administrator.PrefixCommand;
 import com.marlonreina.resisas.commands.administrator.WelcomeCommand;
 import com.marlonreina.resisas.commands.economy.EconomyCommand;
 import com.marlonreina.resisas.commands.misc.HelpCommand;
-import com.marlonreina.resisas.commands.music.MusicCommand;
 import com.marlonreina.resisas.commands.riot.ValorantLeaderboardCommand;
 import com.marlonreina.resisas.commands.riot.ValorantMatchCommand;
 import com.marlonreina.resisas.commands.riot.ValorantPlayerCommand;
 import com.marlonreina.resisas.commands.riot.ValorantRankCommand;
 import com.marlonreina.resisas.commands.riot.ValorantRegisterCommand;
 import com.marlonreina.resisas.commands.test.PingCommand;
+import com.marlonreina.resisas.repository.BotCommandRepository;
 import com.marlonreina.resisas.service.EconomyService;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.service.LeaderboardService;
-import com.marlonreina.resisas.service.MusicService;
 import com.marlonreina.resisas.service.RiotService;
 import com.marlonreina.resisas.service.WelcomeConfigService;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -37,15 +37,15 @@ public class CommandHandler {
     private final GuildService guildService;
     private final WelcomeConfigService welcomeConfigService;
     private final EconomyService economyService;
-    private final MusicService musicService;
     private final String welcomeConfigUrl;
+    private final BotCommandRepository botCommandRepository;
 
     public CommandHandler(RiotService riotService,
                           LeaderboardService leaderboardService,
                           GuildService guildService,
                           WelcomeConfigService welcomeConfigService,
                           EconomyService economyService,
-                          MusicService musicService,
+                          BotCommandRepository botCommandRepository,
                           @Value("${resisas.web.welcome-config-url}") String welcomeConfigUrl) {
 
         this.riotService = riotService;
@@ -53,8 +53,8 @@ public class CommandHandler {
         this.guildService = guildService;
         this.welcomeConfigService = welcomeConfigService;
         this.economyService = economyService;
-        this.musicService = musicService;
         this.welcomeConfigUrl = welcomeConfigUrl;
+        this.botCommandRepository = botCommandRepository;
 
         registerCommands();
     }
@@ -63,6 +63,7 @@ public class CommandHandler {
 
         commands.put("ping", new PingCommand());
         commands.put("prefix", new PrefixCommand(guildService));
+        commands.put("cmdpremium", new CommandPremiumCommand(botCommandRepository));
         commands.put("clear", new ClearCommand());
         commands.put("kick", new KickCommand());
         commands.put("ban", new BanCommand());
@@ -72,18 +73,6 @@ public class CommandHandler {
         commands.put("balance", new EconomyCommand(economyService, "balance"));
         commands.put("daily", new EconomyCommand(economyService, "daily"));
         commands.put("pay", new EconomyCommand(economyService, "pay"));
-
-        commands.put("music", new MusicCommand(musicService, "menu"));
-        commands.put("play", new MusicCommand(musicService, "play"));
-        commands.put("pause", new MusicCommand(musicService, "pause"));
-        commands.put("resume", new MusicCommand(musicService, "resume"));
-        commands.put("queue", new MusicCommand(musicService, "queue"));
-        commands.put("skip", new MusicCommand(musicService, "skip"));
-        commands.put("next", new MusicCommand(musicService, "next"));
-        commands.put("prev", new MusicCommand(musicService, "prev"));
-        commands.put("stop", new MusicCommand(musicService, "stop"));
-        commands.put("now", new MusicCommand(musicService, "now"));
-        commands.put("volume", new MusicCommand(musicService, "volume"));
 
         commands.put("consultar", new ValorantPlayerCommand(riotService));
         commands.put("vrank", new ValorantRankCommand(riotService));
@@ -116,8 +105,18 @@ public class CommandHandler {
         Command command = commands.get(commandName);
 
         if (command != null) {
+            if (isPremiumCommand(commandName) && !guildService.isPremium(event.getGuild().getId())) {
+                event.getChannel().sendMessage("Este comando es premium para servidores.").queue();
+                return;
+            }
             String[] args = java.util.Arrays.copyOfRange(parts, 1, parts.length);
             command.execute(new CommandContext(event, args, displayPrefix));
         }
+    }
+
+    private boolean isPremiumCommand(String commandName) {
+        return botCommandRepository.findByName(commandName)
+                .map(c -> Boolean.TRUE.equals(c.getPremium()))
+                .orElse(false);
     }
 }
