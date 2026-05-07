@@ -17,7 +17,7 @@ public class GuildService {
     public GuildConfig getOrCreate(String guildId) {
         return repo.findById(guildId)
                 .orElseGet(() -> {
-                    GuildConfig config = new GuildConfig(guildId, "-", false);
+                    GuildConfig config = new GuildConfig(guildId, "!", false, null);
                     return repo.save(config);
                 });
     }
