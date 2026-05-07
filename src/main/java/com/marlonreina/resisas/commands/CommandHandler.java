@@ -16,6 +16,7 @@ import com.marlonreina.resisas.commands.riot.ValorantRegisterCommand;
 import com.marlonreina.resisas.commands.test.PingCommand;
 import com.marlonreina.resisas.repository.BotCommandRepository;
 import com.marlonreina.resisas.service.EconomyService;
+import com.marlonreina.resisas.service.GuildCommandService;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.service.LeaderboardService;
 import com.marlonreina.resisas.service.RiotService;
@@ -39,6 +40,7 @@ public class CommandHandler {
     private final EconomyService economyService;
     private final String welcomeConfigUrl;
     private final BotCommandRepository botCommandRepository;
+    private final GuildCommandService guildCommandService;
 
     public CommandHandler(RiotService riotService,
                           LeaderboardService leaderboardService,
@@ -46,6 +48,7 @@ public class CommandHandler {
                           WelcomeConfigService welcomeConfigService,
                           EconomyService economyService,
                           BotCommandRepository botCommandRepository,
+                          GuildCommandService guildCommandService,
                           @Value("${resisas.web.welcome-config-url}") String welcomeConfigUrl) {
 
         this.riotService = riotService;
@@ -55,6 +58,7 @@ public class CommandHandler {
         this.economyService = economyService;
         this.welcomeConfigUrl = welcomeConfigUrl;
         this.botCommandRepository = botCommandRepository;
+        this.guildCommandService = guildCommandService;
 
         registerCommands();
     }
@@ -105,7 +109,15 @@ public class CommandHandler {
         Command command = commands.get(commandName);
 
         if (command != null) {
-            if (isPremiumCommand(commandName) && !guildService.isPremium(event.getGuild().getId())) {
+            String guildId = event.getGuild().getId();
+            guildService.getOrCreate(guildId);
+
+            if (!guildCommandService.isEnabled(guildId, commandName)) {
+                event.getChannel().sendMessage("Este comando esta deshabilitado en este servidor.").queue();
+                return;
+            }
+
+            if (isPremiumCommand(commandName) && !guildService.isPremium(guildId)) {
                 event.getChannel().sendMessage("Este comando es premium para servidores.").queue();
                 return;
             }

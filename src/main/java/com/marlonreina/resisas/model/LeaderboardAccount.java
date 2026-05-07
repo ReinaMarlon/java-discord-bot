@@ -19,7 +19,10 @@ import lombok.Setter;
 @Setter
 @Table(
         name = "leaderboard_accounts",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"guild_id", "riot_name", "riot_tag"})
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"guild_id", "discord_id"}),
+            @UniqueConstraint(columnNames = {"guild_id", "riot_name", "riot_tag"})
+        }
 )
 public class LeaderboardAccount {
 
@@ -33,10 +36,10 @@ public class LeaderboardAccount {
     @Column(name = "discord_id", nullable = false)
     private String discordId;
 
-    @Column(name = "riot_name", nullable = false)
+    @Column(name = "riot_name")
     private String riotName;
 
-    @Column(name = "riot_tag", nullable = false)
+    @Column(name = "riot_tag")
     private String riotTag;
 
 }
