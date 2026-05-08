@@ -78,7 +78,6 @@ public class LogCommand implements Command {
             return;
         }
 
-        // setlog enable true/false
         if (subCommand.equals("enable")) {
             if (args.length < 2) {
                 event.getChannel().sendMessageEmbeds(
@@ -106,7 +105,6 @@ public class LogCommand implements Command {
             return;
         }
 
-        // Subcomando no reconocido
         event.getChannel().sendMessageEmbeds(
                 EmbedUtil.error("Subcomando no reconocido. Usa `logs` para ver las opciones.").build()
         ).queue();
