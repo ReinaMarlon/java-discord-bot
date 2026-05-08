@@ -3,7 +3,9 @@ package com.marlonreina.resisas.commands.riot;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marlonreina.resisas.commands.Command;
+import com.marlonreina.resisas.commands.CommandContext;
 import com.marlonreina.resisas.service.RiotService;
+import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -19,10 +21,14 @@ public class ValorantRankCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
+    public void execute(CommandContext context) {
+        MessageReceivedEvent event = context.getEvent();
+        String[] args = context.getArgs();
 
         if (args.length < 1) {
-            event.getChannel().sendMessage("Uso: !vrank nombre#tag").queue();
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.usage(context.usage("vrank nombre#tag")).build()
+            ).queue();
             return;
         }
 
@@ -30,7 +36,9 @@ public class ValorantRankCommand implements Command {
             String[] riotId = args[0].split("#");
 
             if (riotId.length < 2) {
-                event.getChannel().sendMessage("Formato correcto: nombre#tag").queue();
+                event.getChannel().sendMessageEmbeds(
+                        EmbedUtil.error("Formato correcto: `nombre#tag`.").build()
+                ).queue();
                 return;
             }
 
@@ -42,7 +50,9 @@ public class ValorantRankCommand implements Command {
             JsonNode root = mapper.readTree(json);
 
             if (root.get("data") == null) {
-                event.getChannel().sendMessage("Jugador no encontrado").queue();
+                event.getChannel().sendMessageEmbeds(
+                        EmbedUtil.error("Jugador no encontrado.").build()
+                ).queue();
                 return;
             }
 
@@ -69,12 +79,14 @@ public class ValorantRankCommand implements Command {
             String imageUrl = data.get("images").get("small").asText();
             embed.setThumbnail(imageUrl);
 
-            embed.setFooter("Resisas Valorant Tracker");
+            embed.setFooter("Hexa Valorant Tracker");
 
             event.getChannel().sendMessageEmbeds(embed.build()).queue();
 
         } catch (Exception e) {
-            event.getChannel().sendMessage("Error al consultar el rango").queue();
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.error("Error al consultar el rango.").build()
+            ).queue();
             e.printStackTrace();
         }
     }

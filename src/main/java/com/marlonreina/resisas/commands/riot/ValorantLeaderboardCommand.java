@@ -3,9 +3,11 @@ package com.marlonreina.resisas.commands.riot;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marlonreina.resisas.commands.Command;
+import com.marlonreina.resisas.commands.CommandContext;
 import com.marlonreina.resisas.model.LeaderboardAccount;
 import com.marlonreina.resisas.service.LeaderboardService;
 import com.marlonreina.resisas.service.RiotService;
+import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -33,20 +35,25 @@ public class ValorantLeaderboardCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
+    public void execute(CommandContext context) {
+        MessageReceivedEvent event = context.getEvent();
 
         String guildId = event.getGuild().getId();
         List<LeaderboardAccount> accounts = leaderboardService.getAccounts(guildId);
 
         if (accounts.isEmpty()) {
-            event.getChannel().sendMessage(
-                    "❌ No hay cuentas registradas. Usa `!vregisteraccount nombre#tag` para agregar una."
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.error("No hay cuentas registradas.")
+                            .addField("Agregar cuenta",
+                                    "`" + context.usage("vregisteraccount nombre#tag") + "`",
+                                    false)
+                            .build()
             ).queue();
             return;
         }
 
-        event.getChannel().sendMessage(
-                "⏳ Consultando " + accounts.size() + " cuenta(s), espera un momento..."
+        event.getChannel().sendMessageEmbeds(
+                EmbedUtil.loading("Consultando " + accounts.size() + " cuenta(s), espera un momento...").build()
         ).queue(loadingMsg -> {
 
             try {
@@ -93,8 +100,8 @@ public class ValorantLeaderboardCommand implements Command {
                 executor.shutdown();
 
                 if (entries.isEmpty()) {
-                    loadingMsg.editMessage(
-                            "❌ No se pudo obtener información de ninguna cuenta."
+                    loadingMsg.editMessageEmbeds(
+                            EmbedUtil.error("No se pudo obtener informacion de ninguna cuenta.").build()
                     ).queue();
                     return;
                 }
@@ -147,13 +154,15 @@ public class ValorantLeaderboardCommand implements Command {
                     );
                 }
 
-                embed.setFooter("Ordenado por ELO • Última actualización ahora");
+                embed.setFooter("Hexa - Ordenado por ELO");
 
                 loadingMsg.delete().queue();
                 event.getChannel().sendMessageEmbeds(embed.build()).queue();
 
             } catch (Exception e) {
-                loadingMsg.editMessage("❌ Error generando el leaderboard.").queue();
+                loadingMsg.editMessageEmbeds(
+                        EmbedUtil.error("Error generando el leaderboard.").build()
+                ).queue();
                 e.printStackTrace();
             }
         });

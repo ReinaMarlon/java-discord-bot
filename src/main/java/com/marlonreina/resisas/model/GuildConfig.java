@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +23,13 @@ public class GuildConfig {
     @Column(name = "guild_id")
     private String guildId;
 
-    @Column(name = "prefix")
+    @Column(name = "prefix", nullable = false)
     private String prefix;
+
+    @Column(name = "premium", nullable = false)
+    private Boolean premium;
+
+    @Column(name = "created_at", insertable = false, updatable = false, nullable = false)
+    private OffsetDateTime createdAt;
 
 }

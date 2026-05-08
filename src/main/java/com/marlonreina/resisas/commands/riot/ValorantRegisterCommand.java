@@ -1,8 +1,9 @@
 package com.marlonreina.resisas.commands.riot;
 
 import com.marlonreina.resisas.commands.Command;
+import com.marlonreina.resisas.commands.CommandContext;
 import com.marlonreina.resisas.service.LeaderboardService;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import com.marlonreina.resisas.utils.EmbedUtil;
 
 public class ValorantRegisterCommand implements Command {
 
@@ -13,10 +14,14 @@ public class ValorantRegisterCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
+    public void execute(CommandContext context) {
+        var event = context.getEvent();
+        String[] args = context.getArgs();
 
         if (args.length < 1) {
-            event.getChannel().sendMessage("Uso: `!vregisteraccount nombre#tag`").queue();
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.usage(context.usage("vregisteraccount nombre#tag")).build()
+            ).queue();
             return;
         }
 
@@ -24,7 +29,9 @@ public class ValorantRegisterCommand implements Command {
         String[] riotId = fullInput.split("#");
 
         if (riotId.length < 2) {
-            event.getChannel().sendMessage("❌ Formato correcto: `nombre#tag`").queue();
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.error("Formato correcto: `nombre#tag`.").build()
+            ).queue();
             return;
         }
 
@@ -36,12 +43,18 @@ public class ValorantRegisterCommand implements Command {
         boolean saved = leaderboardService.register(guildId, discordId, name, tag);
 
         if (saved) {
-            event.getChannel().sendMessage(
-                    "✅ **" + name + "#" + tag + "** registrado en el leaderboard de este servidor."
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.success("Cuenta registrada")
+                            .setDescription("**" + name + "#" + tag
+                                    + "** quedo en el leaderboard de este servidor.")
+                            .build()
             ).queue();
         } else {
-            event.getChannel().sendMessage(
-                    "⚠️ **" + name + "#" + tag + "** ya estaba registrado en este servidor."
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.info("Cuenta existente")
+                            .setDescription("**" + name + "#" + tag
+                                    + "** ya estaba registrada en este servidor.")
+                            .build()
             ).queue();
         }
     }

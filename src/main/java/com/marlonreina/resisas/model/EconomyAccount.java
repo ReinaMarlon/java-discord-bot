@@ -12,19 +12,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
+
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@Table(
-        name = "leaderboard_accounts",
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"guild_id", "discord_id"}),
-            @UniqueConstraint(columnNames = {"guild_id", "riot_name", "riot_tag"})
-        }
-)
-public class LeaderboardAccount {
+@Table(name = "economy_accounts",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"guild_id", "discord_id"}))
+public class EconomyAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +31,11 @@ public class LeaderboardAccount {
     private String guildId;
 
     @Column(name = "discord_id", nullable = false)
-    private String discordId;
+    private String userId;
 
-    @Column(name = "riot_name")
-    private String riotName;
+    @Column(name = "balance", nullable = false)
+    private Long balance;
 
-    @Column(name = "riot_tag")
-    private String riotTag;
-
+    @Column(name = "last_daily_at")
+    private OffsetDateTime lastDailyAt;
 }

@@ -21,4 +21,10 @@ public interface GuildRepository extends JpaRepository<GuildConfig, String> {
     void updatePrefix(@Param("guildId") String guildId,
                       @Param("prefix") String prefix);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE GuildConfig g SET g.premium = :premium WHERE g.guildId = :guildId")
+    void updatePremium(@Param("guildId") String guildId,
+                       @Param("premium") boolean premium);
+
 }
