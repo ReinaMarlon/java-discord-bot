@@ -3,7 +3,9 @@ package com.marlonreina.resisas.commands.riot;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marlonreina.resisas.commands.Command;
+import com.marlonreina.resisas.commands.CommandContext;
 import com.marlonreina.resisas.service.RiotService;
+import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -21,20 +23,28 @@ public class ValorantPlayerCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
+    public void execute(CommandContext context) {
+        MessageReceivedEvent event = context.getEvent();
+        String[] args = context.getArgs();
 
         if (args.length < 1) {
-            event.getChannel().sendMessage("Uso: `!vplayer nombre#tag`").queue();
+            event.getChannel().sendMessageEmbeds(
+                    EmbedUtil.usage(context.usage("vplayer nombre#tag")).build()
+            ).queue();
             return;
         }
 
-        event.getChannel().sendMessage("🔍 Analizando perfil, espera un momento...").queue(loadingMsg -> {
+        event.getChannel().sendMessageEmbeds(
+                EmbedUtil.loading("Analizando perfil, espera un momento...").build()
+        ).queue(loadingMsg -> {
             try {
                 String fullInput = String.join(" ", args);
                 String[] riotId = fullInput.split("#");
 
                 if (riotId.length < 2) {
-                    loadingMsg.editMessage("❌ Formato correcto: `nombre#tag`").queue();
+                    loadingMsg.editMessageEmbeds(
+                            EmbedUtil.error("Formato correcto: `nombre#tag`.").build()
+                    ).queue();
                     return;
                 }
 
@@ -49,7 +59,9 @@ public class ValorantPlayerCommand implements Command {
 
                 JsonNode mmrData = mmrRoot.get("data");
                 if (mmrData == null || mmrData.isNull() || !mmrData.isArray() || mmrData.size() == 0) {
-                    loadingMsg.editMessage("❌ No se encontró el jugador o no tiene partidas ranked.").queue();
+                    loadingMsg.editMessageEmbeds(
+                            EmbedUtil.error("No se encontro el jugador o no tiene partidas ranked.").build()
+                    ).queue();
                     return;
                 }
 
@@ -257,12 +269,15 @@ public class ValorantPlayerCommand implements Command {
                                 + "Clutches: " + clutches + "\n"
                                 + "Agente: " + mostPlayedAgent,
                         false);
+                embed.setFooter("Hexa Valorant Tracker");
 
                 loadingMsg.delete().queue();
                 event.getChannel().sendMessageEmbeds(embed.build()).queue();
 
             } catch (Exception e) {
-                loadingMsg.editMessage("❌ Error obteniendo el perfil.").queue();
+                loadingMsg.editMessageEmbeds(
+                        EmbedUtil.error("Error obteniendo el perfil.").build()
+                ).queue();
                 e.printStackTrace();
             }
         });
