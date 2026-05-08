@@ -62,7 +62,7 @@ public class CommandHandler {
 
         commands.put("help", new HelpCommand(guildService));
 
-        commands.put("setlog", new LogCommand(logService));
+        commands.put("logs", new LogCommand(logService));
     }
 
     public void handle(MessageReceivedEvent event, String prefix) {

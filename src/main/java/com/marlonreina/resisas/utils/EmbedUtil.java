@@ -10,7 +10,7 @@ public class EmbedUtil {
         return new EmbedBuilder()
                 .setTitle(title)
                 .setColor(Color.GREEN)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setFooter("Hexa");
     }
 
     public static EmbedBuilder error(String desc) {
@@ -18,14 +18,14 @@ public class EmbedUtil {
                 .setTitle("Error")
                 .setDescription(desc)
                 .setColor(Color.RED)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setFooter("Hexa");
     }
 
     public static EmbedBuilder info(String title) {
         return new EmbedBuilder()
                 .setTitle(title)
                 .setColor(Color.BLUE)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setFooter("Hexa");
     }
 
     public static EmbedBuilder simplyBuildMessage(String title, String desc, Color color) {
@@ -33,6 +33,6 @@ public class EmbedUtil {
                 .setTitle(title)
                 .setDescription(desc)
                 .setColor(color)
-                .setFooter("Sistema de moderación ResisasBot. V 1.0");
+                .setFooter("Hexa");
     }
 }

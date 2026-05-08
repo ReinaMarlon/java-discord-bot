@@ -2,11 +2,13 @@ package com.marlonreina.resisas.service;
 
 import com.marlonreina.resisas.model.Log;
 import com.marlonreina.resisas.repository.LogRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class LogService {
 
@@ -32,5 +34,12 @@ public class LogService {
                 if (channel != null) channel.sendMessage(message).queue();
             }
         });
+    }
+
+    public void setEnabled(String guildId, boolean enabled) {
+        Log config = logRepository.findById(guildId)
+                .orElse(new Log(guildId, null, false));
+        config.setEnabled(enabled);
+        logRepository.save(config);
     }
 }
