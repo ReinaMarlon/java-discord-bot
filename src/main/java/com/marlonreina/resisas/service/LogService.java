@@ -31,7 +31,9 @@ public class LogService {
         getConfig(guild.getId()).ifPresent(config -> {
             if (config.getChannelId() != null && config.getEnabled()) {
                 var channel = guild.getTextChannelById(config.getChannelId());
-                if (channel != null) channel.sendMessage(message).queue();
+                if (channel != null){
+                    channel.sendMessage(message).queue();
+                }
             }
         });
     }
