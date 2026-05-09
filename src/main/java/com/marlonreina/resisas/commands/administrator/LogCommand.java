@@ -23,7 +23,8 @@ public class LogCommand implements Command {
         var event = context.getEvent();
         var args = context.getArgs();
 
-        if (!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER)) {
+        if (!Objects.requireNonNull(event.getMember())
+                .hasPermission(Permission.MANAGE_SERVER)) {
             event.getChannel().sendMessageEmbeds(
                     EmbedUtil.error("No tienes permisos para ejecutar este comando.").build()
             ).queue();
@@ -34,7 +35,9 @@ public class LogCommand implements Command {
         var config = logService.getConfig(guildId);
 
         String canalActual = config
-                .map(c -> c.getChannelId() != null ? "<#" + c.getChannelId() + ">" : "No configurado")
+                .map(c -> c.getChannelId() != null
+                        ? "<#" + c.getChannelId() + ">"
+                        : "No configurado")
                 .orElse("No configurado");
 
         String estadoActual = config
@@ -45,14 +48,14 @@ public class LogCommand implements Command {
             event.getChannel().sendMessageEmbeds(
                     EmbedUtil.simplyBuildMessage(
                             "Logs",
-                            "Configura el canal de logs del servidor.\n\n" +
-                                    "**Canal:** " + canalActual + "\n" +
-                                    "**Estado:** " + estadoActual + "\n\n" +
-                                    "**Uso**\n" +
-                                    "`" + context.usage("logs setchannel #canal") + "`\n" +
-                                    "`" + context.usage("logs enable true/false") + "`\n\n" +
-                                    "**Descripción**\n" +
-                                    "El canal de logs registra automáticamente eventos relevantes del servidor.",
+                            "Configura el canal de logs del servidor.\n\n"
+                                    + "**Canal:** " + canalActual + "\n"
+                                    + "**Estado:** " + estadoActual + "\n\n"
+                                    + "**Uso**\n"
+                                    + "`" + context.usage("logs setchannel #canal") + "`\n"
+                                    + "`" + context.usage("logs enable true/false") + "`\n\n"
+                                    + "**Descripcion**\n"
+                                    + "El canal de logs registra eventos relevantes del servidor.",
                             Color.CYAN
                     ).build()
             ).queue();
@@ -66,7 +69,9 @@ public class LogCommand implements Command {
 
             if (mentioned.isEmpty()) {
                 event.getChannel().sendMessageEmbeds(
-                        EmbedUtil.error("Menciona un canal válido. Ej: `" + context.usage("logs setchannel #logs") + "`").build()
+                        EmbedUtil.error("Menciona un canal valido. Ej: `"
+                                + context.usage("logs setchannel #logs")
+                                + "`").build()
                 ).queue();
                 return;
             }
@@ -75,7 +80,8 @@ public class LogCommand implements Command {
             logService.setLogChannel(guildId, channelId);
 
             event.getChannel().sendMessageEmbeds(
-                    EmbedUtil.success("Canal de logs actualizado: <#" + channelId + ">").build()
+                    EmbedUtil.success("Canal de logs actualizado: <#"
+                            + channelId + ">").build()
             ).queue();
             return;
         }
@@ -83,7 +89,9 @@ public class LogCommand implements Command {
         if (subCommand.equals("enable")) {
             if (args.length < 2) {
                 event.getChannel().sendMessageEmbeds(
-                        EmbedUtil.error("Uso: `" + context.usage("logs enable true/false") + "`").build()
+                        EmbedUtil.error("Uso: `"
+                                + context.usage("logs enable true/false")
+                                + "`").build()
                 ).queue();
                 return;
             }
@@ -100,7 +108,7 @@ public class LogCommand implements Command {
             boolean enabled = Boolean.parseBoolean(value);
             logService.setEnabled(guildId, enabled);
 
-            String estado = enabled ? "activado ✅" : "desactivado ❌";
+            String estado = enabled ? "activado" : "desactivado";
             event.getChannel().sendMessageEmbeds(
                     EmbedUtil.success("Sistema de logs " + estado).build()
             ).queue();
@@ -108,7 +116,9 @@ public class LogCommand implements Command {
         }
 
         event.getChannel().sendMessageEmbeds(
-                EmbedUtil.error("Subcomando no reconocido. Usa `" + context.usage("logs") + "` para ver las opciones.").build()
+                EmbedUtil.error("Subcomando no reconocido. Usa `"
+                        + context.usage("logs")
+                        + "` para ver las opciones.").build()
         ).queue();
     }
 }
