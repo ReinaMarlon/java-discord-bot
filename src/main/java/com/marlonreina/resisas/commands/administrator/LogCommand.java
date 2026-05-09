@@ -1,10 +1,10 @@
 package com.marlonreina.resisas.commands.administrator;
 
 import com.marlonreina.resisas.commands.Command;
+import com.marlonreina.resisas.commands.CommandContext;
 import com.marlonreina.resisas.service.LogService;
 import com.marlonreina.resisas.utils.EmbedUtil;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.Color;
 import java.util.Objects;
@@ -18,7 +18,10 @@ public class LogCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
+    public void execute(CommandContext context) {
+
+        var event = context.getEvent();
+        var args = context.getArgs();
 
         if (!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER)) {
             event.getChannel().sendMessageEmbeds(
@@ -38,7 +41,6 @@ public class LogCommand implements Command {
                 .map(c -> Boolean.TRUE.equals(c.getEnabled()) ? "Activado" : "Desactivado")
                 .orElse("Desactivado");
 
-        // Sin argumentos → mostrar embed informativo
         if (args.length < 1) {
             event.getChannel().sendMessageEmbeds(
                     EmbedUtil.simplyBuildMessage(
@@ -47,8 +49,8 @@ public class LogCommand implements Command {
                                     "**Canal:** " + canalActual + "\n" +
                                     "**Estado:** " + estadoActual + "\n\n" +
                                     "**Uso**\n" +
-                                    "`logs setchannel #canal`\n" +
-                                    "`logs enable true/false`\n\n" +
+                                    "`" + context.usage("logs setchannel #canal") + "`\n" +
+                                    "`" + context.usage("logs enable true/false") + "`\n\n" +
                                     "**Descripción**\n" +
                                     "El canal de logs registra automáticamente eventos relevantes del servidor.",
                             Color.CYAN
@@ -64,7 +66,7 @@ public class LogCommand implements Command {
 
             if (mentioned.isEmpty()) {
                 event.getChannel().sendMessageEmbeds(
-                        EmbedUtil.error("Menciona un canal válido. Ej: `log setchannel #logs`").build()
+                        EmbedUtil.error("Menciona un canal válido. Ej: `" + context.usage("logs setchannel #logs") + "`").build()
                 ).queue();
                 return;
             }
@@ -81,7 +83,7 @@ public class LogCommand implements Command {
         if (subCommand.equals("enable")) {
             if (args.length < 2) {
                 event.getChannel().sendMessageEmbeds(
-                        EmbedUtil.error("Uso: `log enable true` o `setlog enable false`").build()
+                        EmbedUtil.error("Uso: `" + context.usage("logs enable true/false") + "`").build()
                 ).queue();
                 return;
             }
@@ -98,7 +100,7 @@ public class LogCommand implements Command {
             boolean enabled = Boolean.parseBoolean(value);
             logService.setEnabled(guildId, enabled);
 
-            String estado = enabled ? "activado" : "desactivado";
+            String estado = enabled ? "activado ✅" : "desactivado ❌";
             event.getChannel().sendMessageEmbeds(
                     EmbedUtil.success("Sistema de logs " + estado).build()
             ).queue();
@@ -106,7 +108,7 @@ public class LogCommand implements Command {
         }
 
         event.getChannel().sendMessageEmbeds(
-                EmbedUtil.error("Subcomando no reconocido. Usa `logs` para ver las opciones.").build()
+                EmbedUtil.error("Subcomando no reconocido. Usa `" + context.usage("logs") + "` para ver las opciones.").build()
         ).queue();
     }
 }
