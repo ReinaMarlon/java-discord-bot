@@ -4,6 +4,7 @@ import com.marlonreina.resisas.commands.administrator.BanCommand;
 import com.marlonreina.resisas.commands.administrator.ClearCommand;
 import com.marlonreina.resisas.commands.administrator.CommandPremiumCommand;
 import com.marlonreina.resisas.commands.administrator.KickCommand;
+import com.marlonreina.resisas.commands.administrator.LogCommand;
 import com.marlonreina.resisas.commands.administrator.PrefixCommand;
 import com.marlonreina.resisas.commands.administrator.WelcomeCommand;
 import com.marlonreina.resisas.commands.economy.EconomyCommand;
@@ -19,6 +20,7 @@ import com.marlonreina.resisas.service.EconomyService;
 import com.marlonreina.resisas.service.GuildCommandService;
 import com.marlonreina.resisas.service.GuildService;
 import com.marlonreina.resisas.service.LeaderboardService;
+import com.marlonreina.resisas.service.LogService;
 import com.marlonreina.resisas.service.RiotService;
 import com.marlonreina.resisas.service.WelcomeConfigService;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -36,6 +38,7 @@ public class CommandHandler {
     private final RiotService riotService;
     private final LeaderboardService leaderboardService;
     private final GuildService guildService;
+    private final LogService logService;
     private final WelcomeConfigService welcomeConfigService;
     private final EconomyService economyService;
     private final String welcomeConfigUrl;
@@ -45,6 +48,7 @@ public class CommandHandler {
     public CommandHandler(RiotService riotService,
                           LeaderboardService leaderboardService,
                           GuildService guildService,
+                          LogService logService,
                           WelcomeConfigService welcomeConfigService,
                           EconomyService economyService,
                           BotCommandRepository botCommandRepository,
@@ -54,6 +58,7 @@ public class CommandHandler {
         this.riotService = riotService;
         this.leaderboardService = leaderboardService;
         this.guildService = guildService;
+        this.logService = logService;
         this.welcomeConfigService = welcomeConfigService;
         this.economyService = economyService;
         this.welcomeConfigUrl = welcomeConfigUrl;
@@ -86,6 +91,8 @@ public class CommandHandler {
         commands.put("vregisteraccount", new ValorantRegisterCommand(leaderboardService));
         commands.put("vleaderboard", new ValorantLeaderboardCommand(leaderboardService, riotService));
 
+        commands.put("logs", new LogCommand(logService));
+      
         commands.put("help", new HelpCommand());
 
     }
